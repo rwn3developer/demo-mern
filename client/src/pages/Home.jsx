@@ -97,11 +97,12 @@ const Home = () => {
     <div className='container'>
       <h2 align="center">Product</h2>
 
-      <div className="row">
-        <h4>Filterbar</h4>
-      </div>
+      
 
       <div className="row  pt-5 pb-5" style={{ backgroundColor: "#FCFCE2" }}>
+
+       
+
         <div className="col-lg-3 col-md-6 col-sm-12">
           <h4 align="center">Category Filter</h4>
           {
@@ -135,6 +136,36 @@ const Home = () => {
          
         </div>
         <div className="col-lg-9">
+
+        <div className="row justify-content-between">
+          <div className="col-lg-3 mb-3">
+           
+              <label>Product search :- </label>
+              <input type="text"  className='form-control' placeholder='Product search'/>
+            
+          </div>
+
+          <div className="col-lg-3">
+            <label>Product search :- </label>
+              <select className='form-control'>
+                  <option>---select---</option>
+                  <option>High to low</option>
+                  <option>Low to high</option>
+              </select>
+          </div>
+
+          <div className="col-lg-3">
+            <label>Product status :- </label>
+              <select className='form-control'>
+                  <option>---select---</option>
+                  <option>Best</option>
+                  <option>Latest</option>
+                  <option>Upcomming</option>
+              </select>
+          </div>
+
+        </div>
+
           <div className="row">
             {
               product && product.map((item) => {
