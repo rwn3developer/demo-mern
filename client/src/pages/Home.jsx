@@ -108,39 +108,31 @@ const Home = () => {
             
           category && category.map((val) => {
               return (
-                <p>
-                  <Checkbox key={val._id} onChange={(e) => categoryFilter(e.target.checked, val._id)}>
+                <div className='mt-2'  key={val._id}>
+                  <Checkbox  onChange={(e) => categoryFilter(e.target.checked, val._id)}>
                   {val.name}
                 </Checkbox>
-                </p>
+                </div>
               )
             })
           }
 
           <h4 align="center">Price Filter</h4>
-          {/* {
-          price.map((p)=>{
-            return (
-              <p key={p._id} onChange={ (e) => setRadio(e.target.value) }>
-                <input type='radio'   value={p.array}/> {p.name}
-              </p> 
-            )
-          })
-        } */}
-
           <Radio.Group onChange={e => setRadio(e.target.value)} >
             {
               price.map(p =>
-              (
-                <p> key={p._id}
-                  <Radio value={p.array}>{p.name}</Radio>
-                </p>
-              )
+                (
+                  <div className='mt-2'> key={p._id}
+                    <Radio value={p.array}>{p.name}</Radio>
+                  </div>
+                )
               )
             }
           </Radio.Group>
+          <br></br>
+          <button className='btn btn-danger mt-3' onClick={() => window.location.reload()}>Reset Filter</button>
 
-          <button className='btn btn-danger' onClick={() => window.location.reload()}>Reset Filter</button>
+         
         </div>
         <div className="col-lg-9">
           <div className="row">
