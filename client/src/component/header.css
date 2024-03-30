@@ -1,0 +1,19 @@
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+.header{
+    color: white;
+    position: fixed;
+    display: flex;
+    width: 100%;
+    z-index: 1;
+}
+.nav-item a{
+    color: white !important;
+}
+.navbar-brand{
+    color: white;
+}
