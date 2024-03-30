@@ -39,4 +39,25 @@ routes.post('/addproduct',async(req,res)=>{
    }
 })
 
+//price and category wise filter product
+routes.post('/filterProduct',async(req,res)=>{
+    try{
+        const { checked, radio } = req.body; 
+        let args = {};
+        if (checked.length > 0) args.categoryId = checked; 
+        if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
+        const products = await Product.find(args);
+        res.json({
+          success: true,
+          products,
+        });
+      }catch(err){
+        res.status(500).send({
+          success: false,
+          err,
+          message: "Error in Filter",
+        });
+      }
+})
+
 module.exports = routes

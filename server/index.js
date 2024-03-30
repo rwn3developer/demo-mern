@@ -8,9 +8,15 @@ const cors = require('cors');
 
 const db = require('./config/db')
 
+
 app.use(cors());
 
+app.use(express.json());
+
 app.use(express.urlencoded())
+
+
+
 
 app.use('/category',require('./routes/categoryRoute'))
 app.use('/products',require('./routes/productRoute'))
