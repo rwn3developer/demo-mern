@@ -4,36 +4,48 @@ const routes = express.Router();
 
 const Product = require('../models/productModel');
 
+const mongoose  = require('mongoose')
+
 routes.get('/', async (req, res) => {
-  try{
-  const page = parseInt(req.query.page);
-  const limit = parseInt(req.query.limit);
+  const { page = 1, limit = 3, category, price , keyword } = req.query; 
+  const skip = (page - 1) * limit;
+  const filter = {};
 
+  //convert to string to array
+  let p = price.split(',');
+  
+  //convert to string to array 
+  const categoryIdArray = category.split(',').map(id => id.trim()); 
 
-  // Calculate the start and end indexes for the requested page 
-  const startIndex = (page - 1) * limit;
-  const endIndex = page * limit;
-
-  // Slice the products array based on the indexes
-  let product = await Product.find({});
-
-  const paginatedProducts = await product.slice(startIndex, endIndex); 
-
-  // Calculate the total number of pages
-  const totalPages = Math.ceil(product.length / limit);
-
-  // Send the paginated products and total pages as the API response
-  res.status(200).send({ 
-    product: paginatedProducts, 
-    totalPages 
-  });
-
-  }catch(err){
-      console.log(err);
-      return false;
+  if (category) {
+      filter.categoryId = categoryIdArray
   }
 
-})
+  if (price) {
+    filter.price = { $gte: p[0], $lte: p[1] };
+  }
+      
+
+  if (keyword) {
+    filter.name = { $regex: keyword, $options: 'i' };
+  }
+
+  try {
+    const products = await Product.find(filter)
+      .skip(skip)
+      .limit(parseInt(limit));
+    const totalCount = await Product.countDocuments(filter);
+
+    res.json({
+      products,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(totalCount / limit),
+    });
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 routes.post('/addproduct', async (req, res) => {
   try {
@@ -56,29 +68,6 @@ routes.post('/addproduct', async (req, res) => {
   }
 })
 
-//price and category wise filter product
-routes.post('/filterProduct', async (req, res) => {
-  try {
-    const { checked, radio, search } = req.body;
-    // console.log(req.body);
-    let args = {};
-    if (checked.length > 0) args.categoryId = checked;
-    if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
-    if (search) {
-      args.name = { $regex: search, $options: 'i' }
-    }
-    const products = await Product.find(args);
-    res.json({
-      success: true,
-      products,
-    });
-  } catch (err) {
-    res.status(500).send({
-      success: false,
-      err,
-      message: "Error in Filter",
-    });
-  }
-})
+
 
 module.exports = routes

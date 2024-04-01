@@ -14,7 +14,11 @@ const Product = () => {
   const [radio, setRadio] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
-  const [search, setSearch] = useState('');
+  const [keyword, setKeyword] = useState('');
+
+  
+
+  
 
 
 
@@ -32,20 +36,16 @@ const Product = () => {
       })
   }
 
-  const getAllproduct = async (page) => {
+  const getAllproduct = async () => {
     try {
-        let allproduct = await axios.get(`http://localhost:8000/products?page=${page}&limit=6`);
-        if (allproduct) {
-          const { product, totalPages } = allproduct.data;
-          setProduct(product);
-          setTotalPages(totalPages)
-        } else {
-          console.log("not fetch record");
-        }
-    } catch (err) {
-      console.log("something wrong");
-      return false;
+      const response = await axios.get(`http://localhost:8000/products?page=${currentPage}&limit=3&category=${checked}&price=${radio}&keyword=${keyword}`);
+
+      setProduct(response.data.products);
+      setTotalPages(response.data.totalPages);
+    } catch (error) {
+      console.error('Error fetching products:', error); 
     }
+
   }
 
   //multiple checkbox value get
@@ -59,35 +59,13 @@ const Product = () => {
     setChecked(all)
   }
 
-  //filter product price and category wise
-  const filterProduct = async () => {
-    try {
-      const { data } = await axios.post(`http://localhost:8000/products/filterProduct`, {
-        checked, radio,search,checked
-      })
-      setProduct(data?.products)
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  // category and price wise filter record using conditional rendering
-  useEffect(() => {
-    if (checked.length || radio.length || search) {
-      filterProduct()
-    }
-  }, [checked, radio,search])
-
-
-  //not filter category and price show all record 
-  useEffect(() => {
-    if (!checked.length || !radio.length) getAllproduct(currentPage)
-  }, [])
-
   useEffect(() => {
     getAllcategory();
   }, [])
 
+  useEffect(()=>{
+      getAllproduct()
+  },[checked,keyword,radio])
 
   //pagination logic
   useEffect(() => {
@@ -106,8 +84,6 @@ const Product = () => {
       setCurrentPage(currentPage + 1);
     }
   }
-
-  
 
 
   return (
@@ -152,8 +128,9 @@ const Product = () => {
             <div className="row justify-content-between">
               <div className="col-lg-3 mb-3">
 
+                {/* search input value get */}
                 <label>Product search :- </label>
-                <input type="text" value={search} onChange={ (e) => setSearch(e.target.value) }  className='form-control' placeholder='Product search' />
+                <input type="text" value={keyword} onChange={ (e) => setKeyword(e.target.value) }  className='form-control' placeholder='Product search' />
 
               </div>
 
@@ -179,6 +156,7 @@ const Product = () => {
             </div>
 
             <div className="row">
+              {/* all product show */}
               {
                 product && product.map((item) => {
                   return (
