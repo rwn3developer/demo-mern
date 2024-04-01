@@ -14,6 +14,9 @@ const Product = () => {
   const [radio, setRadio] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
+  const [search, setSearch] = useState('');
+
+
 
   const pageNumber = [...Array(totalPages + 1).keys()].slice(1)
 
@@ -31,14 +34,14 @@ const Product = () => {
 
   const getAllproduct = async (page) => {
     try {
-      let allproduct = await axios.get(`http://localhost:8000/products?page=${page}&limit=6`);
-      if (allproduct) {
-        const { product, totalPages } = allproduct.data;
-        setProduct(product);
-        setTotalPages(totalPages)
-      } else {
-        console.log("not fetch record");
-      }
+        let allproduct = await axios.get(`http://localhost:8000/products?page=${page}&limit=6`);
+        if (allproduct) {
+          const { product, totalPages } = allproduct.data;
+          setProduct(product);
+          setTotalPages(totalPages)
+        } else {
+          console.log("not fetch record");
+        }
     } catch (err) {
       console.log("something wrong");
       return false;
@@ -60,7 +63,7 @@ const Product = () => {
   const filterProduct = async () => {
     try {
       const { data } = await axios.post(`http://localhost:8000/products/filterProduct`, {
-        checked, radio
+        checked, radio,search,checked
       })
       setProduct(data?.products)
     } catch (err) {
@@ -70,10 +73,10 @@ const Product = () => {
 
   // category and price wise filter record using conditional rendering
   useEffect(() => {
-    if (checked.length || radio.length) {
+    if (checked.length || radio.length || search) {
       filterProduct()
     }
-  }, [checked, radio])
+  }, [checked, radio,search])
 
 
   //not filter category and price show all record 
@@ -103,6 +106,8 @@ const Product = () => {
       setCurrentPage(currentPage + 1);
     }
   }
+
+  
 
 
   return (
@@ -148,7 +153,7 @@ const Product = () => {
               <div className="col-lg-3 mb-3">
 
                 <label>Product search :- </label>
-                <input type="text" className='form-control' placeholder='Product search' />
+                <input type="text" value={search} onChange={ (e) => setSearch(e.target.value) }  className='form-control' placeholder='Product search' />
 
               </div>
 
