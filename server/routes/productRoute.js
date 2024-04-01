@@ -6,12 +6,30 @@ const Product = require('../models/productModel');
 
 routes.get('/',async(req,res)=>{
     try{
-        let product = await Product.find({});
-        return res.status(200).send({
-            success : true,
-            message : "product successfully fetch",
-            product
-        })
+
+      const page = parseInt(req.query.page);
+      const limit = parseInt(req.query.limit);
+      
+      // Calculate the start and end indexes for the requested page
+      const startIndex = (page - 1) * limit;
+      const endIndex = page * limit;
+      
+      // Slice the products array based on the indexes
+      let product = await Product.find({});
+     
+      const paginatedProducts = await product.slice(startIndex, endIndex); 
+
+      
+      
+      // Calculate the total number of pages
+      const totalPages = Math.ceil(product.length / limit);
+      
+      // Send the paginated products and total pages as the API response
+      res.status(200).send({ 
+        product: paginatedProducts, 
+        totalPages 
+      });
+    
     }catch(err){
         console.log(err);
         return false;

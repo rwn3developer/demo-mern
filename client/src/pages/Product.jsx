@@ -12,6 +12,12 @@ const Product = () => {
   const [category, setCategory] = useState([])
   const [checked, setChecked] = useState([])
   const [radio, setRadio] = useState([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(0)
+
+  const pageNumber = [...Array(totalPages + 1).keys()].slice(1)
+
+
 
 
 
@@ -23,11 +29,13 @@ const Product = () => {
       })
   }
 
-  const getAllproduct = async () => {
+  const getAllproduct = async (page) => {
     try {
-      let allproduct = await axios.get(`http://localhost:8000/products`);
+      let allproduct = await axios.get(`http://localhost:8000/products?page=${page}&limit=6`);
       if (allproduct) {
-        setProduct(allproduct.data.product);
+        const { product, totalPages } = allproduct.data;
+        setProduct(product);
+        setTotalPages(totalPages)
       } else {
         console.log("not fetch record");
       }
@@ -35,12 +43,6 @@ const Product = () => {
       console.log("something wrong");
       return false;
     }
-
-    // fetch(`http://localhost:8000/products`)
-    //   .then(res => res.json())
-    //   .then((record)=>{
-    //         setProduct(record)
-    //   })
   }
 
   //multiple checkbox value get
@@ -64,16 +66,6 @@ const Product = () => {
     } catch (err) {
       console.log(err);
     }
-
-
-    // let data = {radio,checked}
-    // fetch(`http://localhost:8000/products/filterProduct`,{
-    //   method : "POST",
-    //   headers : {
-    //     'Content-type' : "application/json"
-    //   },
-    //   body: JSON.stringify(data),
-    // })
   }
 
   // category and price wise filter record using conditional rendering
@@ -86,7 +78,7 @@ const Product = () => {
 
   //not filter category and price show all record 
   useEffect(() => {
-    if (!checked.length || !radio.length) getAllproduct()
+    if (!checked.length || !radio.length) getAllproduct(currentPage)
   }, [])
 
   useEffect(() => {
@@ -94,12 +86,31 @@ const Product = () => {
   }, [])
 
 
+  //pagination logic
+  useEffect(() => {
+    getAllproduct(currentPage);
+  }, [currentPage]);
+
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  }
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  }
+
+
   return (
 
     <>
       <Header />
       <div className='container'>
-        <div style={{marginTop: "10px 0px 10px 0px;"}} className="heading">
+        <div style={{ marginTop: "10px 0px 10px 0px;" }} className="heading">
           <h3 align="center">All Product</h3>
         </div>
         <div className="row  pt-5 pb-5" style={{ backgroundColor: "" }}>
@@ -186,12 +197,32 @@ const Product = () => {
                 })
               }
             </div>
+
+           
+           {/* pagination part start */}
+
+            <nav className='d-flex justify-content-center' aria-label="Page navigation example">
+              <ul className="pagination">
+                <li className="page-item">
+                  <button className="page-link" onClick={handlePrevPage} disabled={currentPage == 1}>Previous</button>
+                </li>
+
+                {pageNumber.map(pgNumber => (
+                    <li className={`page-item ${currentPage == pgNumber ? 'active' : ''}`}>
+                      <button className='page-link' onClick={ () => setCurrentPage(pgNumber) }>{pgNumber}</button>
+                    </li>
+                ))}
+                
+                <li className="page-item">
+                  <button className="page-link" onClick={handleNextPage} disabled={currentPage === totalPages}>Next</button>
+                </li>
+              </ul>
+            </nav>
+             {/* pagination part start */}
           </div>
         </div>
       </div>
     </>
-
-
   )
 }
 
