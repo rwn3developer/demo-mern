@@ -2,11 +2,13 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Header from '../component/Header'
 import axios from 'axios'
+import { useAuth } from '../context/Auth'
 
 const Login = () => {
 
     const [email,setEmail] = useState("")
     const [password,setPassword] = useState("")
+    const [auth,setAuth] = useAuth();
 
     const handleSubmit = async(e) => {
         e.preventDefault();
@@ -16,9 +18,18 @@ const Login = () => {
                 password : password
             })
             if(data.success){
-                console.log(data);
                 alert("User successfully Login")
-                
+                setAuth({
+                    ...auth,
+                    user : data.user,
+                    token : data.token
+                })
+                let obj = {
+                    ...auth,
+                    user : data.user,
+                    token : data.token
+                }
+                localStorage.setItem('auth',JSON.stringify(obj))
             }else{
                 alert(data.message)
             }

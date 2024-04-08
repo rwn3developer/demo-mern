@@ -1,10 +1,20 @@
 import React from 'react'
 import './header.css'
 import { Link } from 'react-router-dom'
+import { useAuth } from '../context/Auth'
 const Header = () => {
+    const [auth, setAuth] = useAuth();
+    const handleLogout = () => {
+        setAuth({
+            ...auth,
+            user : null,
+            token : ""
+        })
+        localStorage.removeItem('auth')
+        alert("Logout successfully")
+    }
     return (
-        <div className='header' style={{backgroundColor : "#38419D"}}>
-
+        <div className='header' style={{ backgroundColor: "#38419D" }}>
             <div className="container">
                 <nav className="navbar navbar-expand-lg navbar-ligh">
                     <div className="container-fluid">
@@ -14,15 +24,21 @@ const Header = () => {
                         </button>
                         <div className="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+                                {
+                                    !auth?.user ? (<>
+                                        <li className="nav-item">
+                                            <Link to={`/login`} className="nav-link active" aria-current="page">Login</Link>
+                                        </li>
 
-                                <li className="nav-item">
-                                    <Link to={`/login`} className="nav-link active" aria-current="page">Login</Link>
-                                </li>
-
-                                <li className="nav-item">
-                                    <Link to={`/register`} className="nav-link active" aria-current="page">Register</Link>
-                                </li>
-                                
+                                        <li className="nav-item">
+                                            <Link to={`/register`} className="nav-link active" aria-current="page">Register</Link>
+                                        </li>
+                                    </>) : (
+                                        <li className="nav-item">
+                                            <Link onClick={ () => handleLogout()} className="nav-link active" aria-current="page">Logout</Link>
+                                        </li>
+                                    )
+                                }
                                 <li className="nav-item">
                                     <Link to={`/`} className="nav-link active" aria-current="page">Home</Link>
                                 </li>
@@ -35,16 +51,12 @@ const Header = () => {
                                 <li className="nav-item">
                                     <Link className="nav-link">Contact</Link>
                                 </li>
-
-
                             </ul>
                         </div>
                     </div>
                 </nav>
             </div>
-
         </div>
     )
 }
-
 export default Header
