@@ -7,7 +7,7 @@ const Product = require('../models/productModel');
 const mongoose  = require('mongoose')
 
 routes.get('/', async (req, res) => {
-  const { page = 1, limit = 3, category, price , keyword } = req.query; 
+  const { page = 1, limit = 3, category, price , keyword, marketstatus } = req.query; 
   const skip = (page - 1) * limit;
   const filter = {};
 
@@ -25,9 +25,12 @@ routes.get('/', async (req, res) => {
     filter.price = { $gte: p[0], $lte: p[1] };
   }
       
-
   if (keyword) {
     filter.name = { $regex: keyword, $options: 'i' };
+  }
+
+  if(marketstatus){
+    filter.marketstatus = marketstatus
   }
 
   try {

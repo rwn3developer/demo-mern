@@ -16,7 +16,8 @@ app.use(express.urlencoded())
 
 
 app.use('/category',require('./routes/categoryRoute'))
-app.use('/products',require('./routes/productRoute'))
+app.use('/products',require('./routes/productRoute'));
+app.use('/users',require('./routes/userRoute'));
 
 
 app.listen(port,(err)=>{

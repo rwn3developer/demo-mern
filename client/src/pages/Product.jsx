@@ -35,7 +35,7 @@ const Product = () => {
 
   const getAllproduct = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/products?page=${currentPage}&limit=3&category=${checked}&price=${radio}&keyword=${keyword}`);
+      const response = await axios.get(`http://localhost:8000/products?page=${currentPage}&limit=3&category=${checked}&price=${radio}&keyword=${keyword}&marketstatus=${marketstatusvalue}`);
 
       setProduct(response.data.products);
       setTotalPages(response.data.totalPages);

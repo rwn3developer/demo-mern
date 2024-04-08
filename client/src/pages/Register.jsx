@@ -1,33 +1,76 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import Header from '../component/Header'
+import axios from 'axios'
 
 const Register = () => {
-    return (
-        <div align="center">
-            <h2>Register User</h2>
 
-            <div className="container mt-3">
-                <table border="1">
-                    <tr>
-                        <td>Email :- </td>
-                        <td><input type="text" /></td>
-                    </tr>
-                    <tr>
-                        <td>Email :- </td>
-                        <td><input type="text" /></td>
-                    </tr>
-                    <tr>
-                        <td>Password :- </td>
-                        <td><input type="text" /></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td><input type="button" value="Login" /></td>
-                    </tr>
-                </table>
-                <Link to={`/`}>Sign In</Link>
+    const [name,setName] = useState("");
+    const [email,setEmail] = useState("");
+    const [password,setPassword] = useState("");
+
+    const handleSubmit = async(e) => {
+        e.preventDefault();
+        try{
+            let {data} = await axios.post(`http://localhost:8000/users/register`,{
+                name : name,
+                email : email,
+                password : password
+            })
+            if(data.success){
+                alert(data.message)
+                setName("")
+                setEmail("")
+                setPassword("")
+            }else{
+                alert(data.message)
+            }
+        }
+        catch(err){
+            console.log(err);
+            return false;
+        }
+    }
+   
+    return (
+        <>
+            <Header />
+            <br></br><br></br><br></br>
+            <div className="container">
+                <div className="row">
+                    <div className="col-lg-8 p-5 ms-auto me-auto">
+                        <div className="card">
+                            <div className="card-header">
+                                <span style={{ fontSize: "20px", fontWeight: "500" }}>Register User</span>
+                            </div>
+                            <div className="card-body">
+                                <form onSubmit={handleSubmit}>
+                                    <div className="mb-3">
+                                        <label htmlFor="exampleInputEmail1" className="form-label">Name</label>
+                                        <input type="text" onChange={ (e) => setName(e.target.value) } value={name} className="form-control" placeholder='Enter Name'/>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="exampleInputEmail1" className="form-label">Email</label>
+                                        <input type="text" onChange={ (e) => setEmail(e.target.value) } value={email} className="form-control" placeholder='Enter Email'/>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="exampleInputPassword1" className="form-label">Password</label>
+                                        <input type="password" onChange={ (e) => setPassword(e.target.value) } value={password} className="form-control" placeholder='Enter Password'/>
+                                    </div>
+                                    <button type="submit" className="btn btn-primary">Submit</button>
+                                    <Link to={`/login`}>
+                                        <button type="submit" className="btn btn-success ms-3">Back To Login</button>
+                                    </Link>
+                                </form>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
             </div>
-        </div>
+        </>
     )
 }
 
