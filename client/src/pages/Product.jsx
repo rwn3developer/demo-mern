@@ -82,6 +82,11 @@ const Product = () => {
     }
   }
 
+  //add to cart
+  const AddToCart = (id) => {
+    alert(id)
+  }
+
 
   return (
 
@@ -151,8 +156,6 @@ const Product = () => {
                       )
                     })
                   }
-                 
-                  
                 </select>
               </div>
 
@@ -171,7 +174,7 @@ const Product = () => {
                           <h6 className="card-text">Rs. {item.price}</h6>
 
                           <div className="row">
-                            <Link className="btn btn-primary mb-2">Add Cart</Link>
+                            <Link className="btn btn-primary mb-2" onClick={ () => AddToCart(item._id) }>Add Cart</Link>
 
                             <Link className="btn btn-success">Details</Link>
                           </div>
