@@ -15,12 +15,9 @@ const Product = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
   const [keyword, setKeyword] = useState('');
-
+  const [marketstatus,setMarketStatus] = useState(["best","latest","upcomming"])
+  const [marketstatusvalue,setMarketStatusvValue] = useState("");
   
-
-  
-
-
 
   const pageNumber = [...Array(totalPages + 1).keys()].slice(1)
 
@@ -65,11 +62,11 @@ const Product = () => {
 
   useEffect(()=>{
       getAllproduct()
-  },[checked,keyword,radio])
+  },[checked,keyword,radio,marketstatusvalue])
 
   //pagination logic
   useEffect(() => {
-    getAllproduct(currentPage);
+    getAllproduct();
   }, [currentPage]);
 
 
@@ -145,11 +142,17 @@ const Product = () => {
 
               <div className="col-lg-3">
                 <label>Product status :- </label>
-                <select className='form-control'>
+                <select onChange={ (e) => setMarketStatusvValue(e.target.value)  } className='form-control'>
                   <option>---select---</option>
-                  <option>Best</option>
-                  <option>Latest</option>
-                  <option>Upcomming</option>
+                  {
+                    marketstatus.map((item)=>{
+                      return (
+                        <option value={item}>{item}</option>
+                      )
+                    })
+                  }
+                 
+                  
                 </select>
               </div>
 
