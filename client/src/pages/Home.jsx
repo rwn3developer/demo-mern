@@ -6,7 +6,7 @@ import Slider from '../component/Slider'
 
 const Home = () => {
     return (
-        <div>
+        <>
             <Header /><br></br><br></br>
             <Slider />
             <div className='best-content'>
@@ -29,7 +29,7 @@ const Home = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 

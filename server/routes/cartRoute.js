@@ -4,6 +4,7 @@ const routes = express.Router();
 
 const Product = require('../models/productModel')
 const Cart = require('../models/cartsModel')
+// const User = require('../models/usersModel')
 
 const {verifyToken} = require('../middleware/verifyToken');
 
@@ -25,7 +26,7 @@ routes.get('/product-single-record',verifyToken,async(req,res)=>{
 })
 
 //add to cart api
-routes.post('/addcarts',async(req,res)=>{
+routes.post('/addcarts',verifyToken,async(req,res)=>{
     try{
         const {categoryId , productId , name , price , qty , description , image ,userId } = req.body
         let cart = await Cart.create({
@@ -40,7 +41,23 @@ routes.post('/addcarts',async(req,res)=>{
         console.log(err);
         return false;
     }
-    
+})
+
+
+//perticular user wise cart data show
+routes.get('/usercart',verifyToken,async(req,res)=>{
+    try{
+        let userid = req.query.userId;
+        let carts = await Cart.find({userId : userid});
+        return res.status(200).send({
+            success : true,
+            message : "User fetch successfully",
+            carts
+        })
+    }catch(err){
+        console.log(err);
+        return false;
+    }
 })
 
 module.exports = routes

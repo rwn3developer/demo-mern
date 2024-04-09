@@ -101,7 +101,7 @@ const Product = () => {
           Authorization : `Bearer ${auth.token}`
         }
 
-        let postData = {
+        let postCartData = {
           categoryId : product.categoryId,
           productId : id,
           name : product.name,
@@ -112,8 +112,7 @@ const Product = () => {
           userId : auth.user._id
         }
         
-        
-        let addcart = await axios.post(`http://localhost:8000/carts/addcarts`,postData,{ headers })
+        let addcart = await axios.post(`http://localhost:8000/carts/addcarts`,postCartData,{ headers })
         if(addcart.data.success){
           alert("Product successfully add to cart")
         }else{

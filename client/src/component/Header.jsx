@@ -7,8 +7,8 @@ const Header = () => {
     const handleLogout = () => {
         setAuth({
             ...auth,
-            user : null,
-            token : ""
+            user: null,
+            token: ""
         })
         localStorage.removeItem('auth')
         alert("Logout successfully")
@@ -35,7 +35,7 @@ const Header = () => {
                                         </li>
                                     </>) : (
                                         <li className="nav-item">
-                                            <Link onClick={ () => handleLogout()} className="nav-link active" aria-current="page">Logout</Link>
+                                            <Link onClick={() => handleLogout()} className="nav-link active" aria-current="page">Logout</Link>
                                         </li>
                                     )
                                 }
