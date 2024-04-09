@@ -91,15 +91,34 @@ const Product = () => {
         let { data } = await axios.get(`http://localhost:8000/carts/product-single-record?id=${id}`, {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${auth.token}`
+            Authorization: `Bearer ${auth.token}`
           }
         })
         let {product} = data;
-        //userid
-        console.log(`userid :- ${auth.user._id}`);
-        console.log(`productId :- ${id}`);
         
-        // let addcart = axios.post(`http://localhost:8000/carts/addcart`)
+        const headers = {
+          'Content-Type' : 'application/json',
+          Authorization : `Bearer ${auth.token}`
+        }
+
+        let postData = {
+          categoryId : product.categoryId,
+          productId : id,
+          name : product.name,
+          price : product.price,
+          qty : product.qty,
+          description : product.description,
+          image : product.image,
+          userId : auth.user._id
+        }
+        
+        
+        let addcart = await axios.post(`http://localhost:8000/carts/addcarts`,postData,{ headers })
+        if(addcart.data.success){
+          alert("Product successfully add to cart")
+        }else{
+          alert("something wrong")
+        }
 
     } catch (err) {
       console.log(err);

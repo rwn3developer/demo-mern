@@ -3,6 +3,7 @@ const express = require('express');
 const routes = express.Router();
 
 const Product = require('../models/productModel')
+const Cart = require('../models/cartsModel')
 
 const {verifyToken} = require('../middleware/verifyToken');
 
@@ -24,8 +25,22 @@ routes.get('/product-single-record',verifyToken,async(req,res)=>{
 })
 
 //add to cart api
-routes.post('/addcarts',(req,res)=>{
-    console.log(req.body);
+routes.post('/addcarts',async(req,res)=>{
+    try{
+        const {categoryId , productId , name , price , qty , description , image ,userId } = req.body
+        let cart = await Cart.create({
+            categoryId , productId , name , price , qty , description , image ,userId
+        })
+        return res.status(200).send({
+            success : true,
+            message : "Product successfully add to cart",
+            cart
+        })
+    }catch(err){
+        console.log(err);
+        return false;
+    }
+    
 })
 
 module.exports = routes
