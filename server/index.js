@@ -18,6 +18,7 @@ app.use(express.urlencoded())
 app.use('/category',require('./routes/categoryRoute'))
 app.use('/products',require('./routes/productRoute'));
 app.use('/users',require('./routes/userRoute'));
+app.use('/carts',require('./routes/cartRoute'));
 
 
 app.listen(port,(err)=>{
@@ -25,5 +26,5 @@ app.listen(port,(err)=>{
         console.log(err);
         return false
     }
-    console.log(`server is start on port :- ${port}`);
+    console.log(`server is start on port :- ${port}`); 
 })

@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { price } from '../Price'
 import axios from 'axios'
 import { Checkbox, Radio } from 'antd'
 import Header from '../component/Header'
+import { useAuth } from '../context/Auth'
 
 
 const Product = () => {
-
+  const navigate = useNavigate();
+  const [auth, setAuth] = useAuth()
   const [product, setProduct] = useState([])
   const [category, setCategory] = useState([])
   const [checked, setChecked] = useState([])
@@ -15,15 +17,11 @@ const Product = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
   const [keyword, setKeyword] = useState('');
-  const [marketstatus,setMarketStatus] = useState(["best","latest","upcomming"])
-  const [marketstatusvalue,setMarketStatusvValue] = useState("");
-  
+  const [marketstatus, setMarketStatus] = useState(["best", "latest", "upcomming"])
+  const [marketstatusvalue, setMarketStatusvValue] = useState("");
+
 
   const pageNumber = [...Array(totalPages + 1).keys()].slice(1)
-
-
-
-
 
   const getAllcategory = () => {
     fetch(`http://localhost:8000/category/categoryView`)
@@ -40,7 +38,7 @@ const Product = () => {
       setProduct(response.data.products);
       setTotalPages(response.data.totalPages);
     } catch (error) {
-      console.error('Error fetching products:', error); 
+      console.error('Error fetching products:', error);
     }
 
   }
@@ -60,9 +58,9 @@ const Product = () => {
     getAllcategory();
   }, [])
 
-  useEffect(()=>{
-      getAllproduct()
-  },[checked,keyword,radio,marketstatusvalue])
+  useEffect(() => {
+    getAllproduct()
+  }, [checked, keyword, radio, marketstatusvalue])
 
   //pagination logic
   useEffect(() => {
@@ -83,8 +81,30 @@ const Product = () => {
   }
 
   //add to cart
-  const AddToCart = (id) => {
-    alert(id)
+  const AddToCart = async (id) => {
+    try {
+        if (!auth.token) {
+          alert("First Login Please")
+          return false
+        } 
+
+        let { data } = await axios.get(`http://localhost:8000/carts/product-single-record?id=${id}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${auth.token}`
+          }
+        })
+        let {product} = data;
+        //userid
+        console.log(`userid :- ${auth.user._id}`);
+        console.log(`productId :- ${id}`);
+        
+        // let addcart = axios.post(`http://localhost:8000/carts/addcart`)
+
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
   }
 
 
@@ -132,7 +152,7 @@ const Product = () => {
 
                 {/* search input value get */}
                 <label>Product search :- </label>
-                <input type="text" value={keyword} onChange={ (e) => setKeyword(e.target.value) }  className='form-control' placeholder='Product search' />
+                <input type="text" value={keyword} onChange={(e) => setKeyword(e.target.value)} className='form-control' placeholder='Product search' />
 
               </div>
 
@@ -147,10 +167,10 @@ const Product = () => {
 
               <div className="col-lg-3">
                 <label>Product status :- </label>
-                <select onChange={ (e) => setMarketStatusvValue(e.target.value)  } className='form-control'>
+                <select onChange={(e) => setMarketStatusvValue(e.target.value)} className='form-control'>
                   <option>---select---</option>
                   {
-                    marketstatus.map((item)=>{
+                    marketstatus.map((item) => {
                       return (
                         <option value={item}>{item}</option>
                       )
@@ -174,7 +194,7 @@ const Product = () => {
                           <h6 className="card-text">Rs. {item.price}</h6>
 
                           <div className="row">
-                            <Link className="btn btn-primary mb-2" onClick={ () => AddToCart(item._id) }>Add Cart</Link>
+                            <Link className="btn btn-primary mb-2" onClick={() => AddToCart(item._id)}>Add Cart</Link>
 
                             <Link className="btn btn-success">Details</Link>
                           </div>
@@ -187,8 +207,8 @@ const Product = () => {
               }
             </div>
 
-           
-           {/* pagination part start */}
+
+            {/* pagination part start */}
 
             <nav className='d-flex justify-content-center' aria-label="Page navigation example">
               <ul className="pagination">
@@ -197,17 +217,17 @@ const Product = () => {
                 </li>
 
                 {pageNumber.map(pgNumber => (
-                    <li className={`page-item ${currentPage == pgNumber ? 'active' : ''}`}>
-                      <button className='page-link' onClick={ () => setCurrentPage(pgNumber) }>{pgNumber}</button>
-                    </li>
+                  <li className={`page-item ${currentPage == pgNumber ? 'active' : ''}`}>
+                    <button className='page-link' onClick={() => setCurrentPage(pgNumber)}>{pgNumber}</button>
+                  </li>
                 ))}
-                
+
                 <li className="page-item">
                   <button className="page-link" onClick={handleNextPage} disabled={currentPage === totalPages}>Next</button>
                 </li>
               </ul>
             </nav>
-             {/* pagination part start */}
+            {/* pagination part start */}
           </div>
         </div>
       </div>
