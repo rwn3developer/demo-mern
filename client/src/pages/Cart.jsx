@@ -7,7 +7,8 @@ const Cart = () => {
 
     const [auth, setAuth] = useAuth();
     let [carts,setCart] = useState([])
-    // const [total,setTotal] = useState(0)
+    let [total,setTotal] = useState(0)
+    
 
     const getUserCart = async() => {
         try{
@@ -15,7 +16,7 @@ const Cart = () => {
                 'Content-Type' : 'application/json',
                 Authorization : `Bearer ${auth?.token}`  
               }
- 
+  
               if(auth?.user?._id){
                 let record = await axios.get(`http://localhost:8000/carts/usercart?userId=${auth?.user?._id}`,{headers});
                 setCart(record.data?.carts) 
@@ -44,6 +45,47 @@ const Cart = () => {
         }
     }
 
+    const editCart = async(id,qty) => {
+        
+        let edit = carts.map((val)=>{
+            if(val._id == id){
+                return {
+                    ...val,
+                    qty : qty
+                }
+            }
+            return val;
+        })
+        setCart(edit)
+
+        let editCart = edit.find((val)=>{
+            return val._id == id
+        })
+
+        let postData = {
+            qty : editCart.qty
+        }
+        
+
+        try{
+            const headers = {
+                'Content-Type' : 'application/json',
+                Authorization : `Bearer ${auth?.token}`  
+              }
+            let {data} = await axios.put(`http://localhost:8000/carts/editcart?id=${id}`,postData,{headers})
+            if(data.success){
+                alert("Cart successfully update")
+            }else{
+                alert("Something Wrong")
+            }
+        }catch(err){
+            console.log(err);
+            return false;
+        }
+    }
+
+    
+
     useEffect(()=>{
         getUserCart()
     },[auth?.token])
@@ -71,26 +113,29 @@ const Cart = () => {
                                 <table className='table table-striped table-hove'>
                                     <thead className='table-primary'>
                                         <tr>
-                                        <th>ID</th>
-                                        <th>Image</th>
-                                        <th>Name</th>
-                                        <th>Qty</th>
-                                        <th>Price</th>
-                                        <th>Total</th>
-                                        <th>Action</th>
+                                            <th>ID</th>
+                                            <th>Image</th>
+                                            <th>Name</th>
+                                            <th>Qty</th>
+                                            <th>Price</th>
+                                            <th>Total</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {
                                             carts && carts.map((cart,index)=>{
+                                                total = total + cart.qty * cart.price
                                                 return (
-                                                    <tr>
+                                                    <tr key={cart._id}> 
                                                         <td>{++index}</td>
                                                         <td>
                                                             <img src={cart.image} width="50" />
                                                         </td>
                                                         <td>{cart.name}</td>
-                                                        <td>{cart.qty}</td>
+                                                        <td>
+                                                            <input type="number" onChange={ (e) => editCart(cart._id,e.target.value) } value={cart.qty} className='form-control w-25'/>
+                                                        </td>
                                                         <td>{cart.price}</td>
                                                         <td>{cart.price * cart.qty}</td>
                                                         <td>
@@ -106,8 +151,16 @@ const Cart = () => {
                         </div>
                     </div>
 
-
-                    <div className="col-lg-2">hello</div>
+                    <div className="col-lg-2">
+                        <div className="card">
+                            <h5 className="card-header">Total</h5>
+                            <div className="card-body">
+                                <p className="card-title">Total Cart :- {carts.length}</p>
+                                <hr></hr>
+                                <button className='btn btn-success'>Rs :- {total}</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </>

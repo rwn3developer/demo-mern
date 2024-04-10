@@ -75,6 +75,25 @@ routes.delete('/deletecart',verifyToken,async(req,res)=>{
     }
 })
 
+//cart update item
+routes.put('/editcart',verifyToken,async(req,res)=>{
+    try{
+        let id = req.query.id;
+        let qty = req.body.qty;
+        let data = await Cart.findByIdAndUpdate(id,{
+            qty : qty
+        })
+        return res.status(200).send({
+            success : true,
+            message : "Cart successfully upate",
+        })
+        
+    }catch(err){
+        console.log(err);
+        return false;
+    }
+})
+
 module.exports = routes
 
 
