@@ -27,6 +27,23 @@ const Cart = () => {
         }
     }
 
+    const deleteCart = async(id) => {
+        try{
+            const headers = {
+                'Content-Type' : 'application/json',
+                Authorization : `Bearer ${auth?.token}`  
+              }
+            let {data} = await axios.delete(`http://localhost:8000/carts/deletecart?id=${id}`,{headers});
+            if(data.success){
+                alert(data.message);
+                getUserCart()
+            }
+        }catch(err){
+            console.log(err);
+            return false
+        }
+    }
+
     useEffect(()=>{
         getUserCart()
     },[auth?.token])
@@ -77,7 +94,7 @@ const Cart = () => {
                                                         <td>{cart.price}</td>
                                                         <td>{cart.price * cart.qty}</td>
                                                         <td>
-                                                            <button className='btn btn-danger btn-sm'>Delete</button>
+                                                            <button onClick={ () => deleteCart(cart._id) } className='btn btn-danger btn-sm'>Delete</button>
                                                         </td>
                                                     </tr>
                                                 )
@@ -98,3 +115,4 @@ const Cart = () => {
 }
 
 export default Cart
+

@@ -60,6 +60,21 @@ routes.get('/usercart',verifyToken,async(req,res)=>{
     }
 })
 
+//cart delete item
+routes.delete('/deletecart',verifyToken,async(req,res)=>{
+    try{
+        let id = req.query.id;
+        let data = await Cart.findByIdAndDelete(id);
+        return res.status(200).send({
+            success : true,
+            message : "Record delete in cart"
+        })
+    }catch(err){
+        console.log(err);
+        return false;
+    }
+})
+
 module.exports = routes
 
 
