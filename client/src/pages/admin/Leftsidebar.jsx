@@ -11,8 +11,13 @@ const Leftsidebar = () => {
                 </div>
                 <div className="card-body">
                     <div className="list-group">
+
                         <Link to={`/admin/dashboard`} className={`list-group-item list-group-item-action ${currentPath === '/admin/dashboard' ? 'active' : ''}`} aria-current="true">
                             Dashboard
+                        </Link>
+
+                        <Link to={`/admin/users`} className={`list-group-item list-group-item-action ${currentPath === '/admin/users' ? 'active' : ''}`} aria-current="true">
+                            Users
                         </Link>
 
                         <Link to={`/admin/category`} className={`list-group-item list-group-item-action ${currentPath === '/admin/category' ? 'active' : ''}`} aria-current="true">
@@ -23,11 +28,9 @@ const Leftsidebar = () => {
                             Product
                         </Link>
 
-
                     </div>
                 </div>
             </div>
-
         </div>
     )
 }
