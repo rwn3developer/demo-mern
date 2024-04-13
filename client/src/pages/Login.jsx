@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Header from '../component/Header'
 import axios from 'axios'
 import { useAuth } from '../context/Auth'
 
 const Login = () => {
-
+    const navigate = useNavigate();
     const [email,setEmail] = useState("")
     const [password,setPassword] = useState("")
     const [auth,setAuth] = useAuth();
@@ -13,25 +13,27 @@ const Login = () => {
     const handleSubmit = async(e) => {
         e.preventDefault();
         try{
-            let {data} = await axios.post(`http://localhost:8000/users/login`,{
+            let res = await axios.post(`http://localhost:8000/users/login`,{
                 email : email,
                 password : password
             })
-            if(data.success){
+            if(res.data.success){
                 alert("User successfully Login")
                 setAuth({
                     ...auth,
-                    user : data.user,
-                    token : data.token
+                    user : res.data.user,
+                    token : res.data.token
                 })
-                let obj = {
-                    ...auth,
-                    user : data.user,
-                    token : data.token
+            
+                localStorage.setItem('auth',JSON.stringify(res.data))
+                if(res.data.user.role){
+                    navigate('/admin/dashboard')
+                }else{
+                    navigate('/')
                 }
-                localStorage.setItem('auth',JSON.stringify(obj))
+                
             }else{
-                alert(data.message)
+                alert(res.data.message)
             }
             setEmail("");
             setPassword("");
