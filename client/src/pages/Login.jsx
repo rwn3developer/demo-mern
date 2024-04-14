@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Header from '../component/Header'
 import axios from 'axios'
@@ -7,8 +7,10 @@ import { useAuth } from '../context/Auth'
 const Login = () => {
     const navigate = useNavigate();
     const [email,setEmail] = useState("")
-    const [password,setPassword] = useState("")
+    const [password,setPassword] = useState("") 
     const [auth,setAuth] = useAuth();
+
+    let data = JSON.parse(localStorage.getItem('auth'));
 
     const handleSubmit = async(e) => {
         e.preventDefault();
@@ -26,7 +28,7 @@ const Login = () => {
                 })
             
                 localStorage.setItem('auth',JSON.stringify(res.data))
-                if(res.data.user.role){
+                if(data?.user?.role){
                     navigate('/admin/dashboard')
                 }else{
                     navigate('/')
@@ -42,6 +44,19 @@ const Login = () => {
             return false;
         }
     }
+
+
+    
+    
+
+    //role base auth
+
+    useEffect(()=>{
+        if(data && data.user.role==="admin"){
+            navigate('/admin/dashboard') 
+        }
+    },[])
+
    
     return (
         <>

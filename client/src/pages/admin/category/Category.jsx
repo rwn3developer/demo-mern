@@ -1,8 +1,39 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../../../component/Header'
 import Leftsidebar from '../Leftsidebar'
+import { useAuth } from '../../../context/Auth'
 
 const Category = () => {
+
+  let [token,setToken] = useState("");
+
+  const [category,setCategory] = useState([])
+
+
+  //api calling fetch method
+
+  const getCategory = () => {
+      fetch(`http://localhost:8000/admin/category/viewcategory`,{
+        method : 'GET',
+        headers : {
+          'Content-Type' : 'application/json',
+          Authorization : `Bearer ${token}` 
+        }
+      })
+      .then(data => data.json())
+      .then((res)=>{
+        if(res.success){
+          setCategory(res.category) 
+        }
+      })
+  }
+
+  useEffect(()=>{
+      let userLogin = JSON.parse(localStorage.getItem('auth'));
+      setToken(userLogin.token)
+      getCategory()
+  },[token])
+
   return (
     <>
       <Header /><br></br><br></br>
@@ -25,15 +56,20 @@ const Category = () => {
                     <tr>
                       <th>ID</th>
                       <th>Name</th>
-                      <th>Name</th>
-                      <th>Qty</th>
-                      <th>Price</th>
-                      <th>Total</th>
                       <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    
+                      {
+                        category.map((item,i)=>{
+                          return (
+                            <tr key={i}> 
+                              <td>{++i}</td>
+                              <td>{item.name}</td>
+                            </tr>
+                          )
+                        })
+                      }
                   </tbody>
                 </table>
               </div>

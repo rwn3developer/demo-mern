@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import './header.css'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/Auth'
 const Header = () => {
     const [auth, setAuth] = useAuth();
+    const navigate = useNavigate();
     const handleLogout = () => {
         setAuth({
             ...auth,
@@ -12,7 +13,10 @@ const Header = () => {
         })
         localStorage.removeItem('auth')
         alert("Logout successfully")
+        navigate('/login')
     }
+
+
     return (
         <div className='header' style={{ backgroundColor: "#38419D" }}>
             <div className="container">
@@ -34,9 +38,37 @@ const Header = () => {
                                             <Link to={`/register`} className="nav-link active" aria-current="page">Register</Link>
                                         </li>
                                     </>) : (
-                                        <li className="nav-item">
-                                            <Link onClick={() => handleLogout()} className="nav-link active" aria-current="page">Logout</Link>
-                                        </li>
+                                        <>
+                                            <li className="nav-item">
+                                                <Link onClick={() => handleLogout()} className="nav-link active" aria-current="page">Logout</Link>
+                                            </li>
+
+                                            <li className='nav-item'>
+
+                                                {
+                                                    auth?.user?.role === "admin" ? (
+                                                        <div className="dropdown">
+                                                            <Link to={`/admin/dashboard`}>
+                                                                <button className="btn btn-info" type="button">
+                                                                    Admin {auth?.user?.name}
+                                                                </button>
+                                                            </Link>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="dropdown">
+                                                            <Link to={`/admin/dashboard`}>
+                                                                <button className="btn btn-info" type="button">
+                                                                    User {auth?.user?.name}
+                                                                </button>
+                                                            </Link>
+                                                        </div>
+                                                    )
+                                                }
+
+
+                                            </li>
+                                        </>
+
                                     )
                                 }
                                 <li className="nav-item">

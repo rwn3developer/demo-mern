@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react'
 import Header from '../component/Header'
 import { useAuth } from '../context/Auth'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 const Cart = () => {
 
+    const navigate = useNavigate();
     const [auth, setAuth] = useAuth();
     let [carts,setCart] = useState([])
     let [total,setTotal] = useState(0)
@@ -87,6 +89,11 @@ const Cart = () => {
     
 
     useEffect(()=>{
+        if(!auth?.token){
+            alert("Please login")
+            navigate('/login')
+            
+        }
         getUserCart()
     },[auth?.token])
 
