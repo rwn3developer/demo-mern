@@ -7,7 +7,7 @@ const Category = require('../models/categoryModel')
 const { verifyToken } = require('../middleware/verifyToken');
 
 //category add by admin side with token
-routes.get('/category/addcategory', verifyToken, async (req, res) => {
+routes.post('/category/addcategory', verifyToken, async (req, res) => {
     try {
         if (!req.body.name) {
             return res.status(200).send({
@@ -29,7 +29,6 @@ routes.get('/category/addcategory', verifyToken, async (req, res) => {
     }
 })
 
-
 //category view by admin side with token
 routes.get('/category/viewcategory', verifyToken, async (req, res) => {
     try {
@@ -45,6 +44,7 @@ routes.get('/category/viewcategory', verifyToken, async (req, res) => {
     }
 })
 
+//category view by admin side with token
 routes.delete('/category/deletecategory',verifyToken,async(req,res)=>{
     try{
         let id = req.query.id;
@@ -58,6 +58,8 @@ routes.delete('/category/deletecategory',verifyToken,async(req,res)=>{
         return false;
     }
 })
+
+
 
 
 
