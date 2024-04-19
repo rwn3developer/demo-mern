@@ -87,9 +87,7 @@ const Product = () => {
           alert("First Login Please")
           return false
         } 
-
         
-
         let { data } = await axios.get(`http://localhost:8000/carts/product-single-record?id=${id}`, {
           headers: {
             'Content-Type': 'application/json',
@@ -124,8 +122,6 @@ const Product = () => {
           }
         })
         
-      
-
     } catch (err) {
       console.log(err);
       return false;

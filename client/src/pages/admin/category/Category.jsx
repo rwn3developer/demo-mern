@@ -6,12 +6,16 @@ import { useAuth } from '../../../context/Auth'
 const Category = () => {
 
   let [token,setToken] = useState("");
-
   const [category,setCategory] = useState([])
 
+    //get token 
+    useEffect(()=>{
+      let userLogin = JSON.parse(localStorage.getItem('auth'));
+      setToken(userLogin.token)
+      getCategory()
+  },[token])
 
   //api calling fetch method
-
   const getCategory = () => {
       fetch(`http://localhost:8000/admin/category/viewcategory`,{
         method : 'GET',
@@ -23,16 +27,29 @@ const Category = () => {
       .then(data => data.json())
       .then((res)=>{
         if(res.success){
-          setCategory(res.category) 
+          setCategory(res.category)  
         }
       })
   }
 
-  useEffect(()=>{
-      let userLogin = JSON.parse(localStorage.getItem('auth'));
-      setToken(userLogin.token)
-      getCategory()
-  },[token])
+  const deleteCategory = (id) => {
+      fetch(`http://localhost:8000/admin/category/deletecategory?id=${id}`,{
+        method : 'DELETE',
+        headers : {
+          'Content-Type' : 'application/json',
+          Authorization : `Bearer ${token}`
+        }
+      })
+      .then((data) => data.json())
+      .then((res)=>{
+          console.log(res);
+      }).catch((err)=>{
+        console.log(err);
+        return false
+      })
+  }
+
+  
 
   return (
     <>
@@ -66,6 +83,9 @@ const Category = () => {
                             <tr key={i}> 
                               <td>{++i}</td>
                               <td>{item.name}</td>
+                              <td>
+                                <button onClick={ () => deleteCategory(item._id) } className='btn btn-danger btn-sm'>Delete</button>
+                              </td>
                             </tr>
                           )
                         })

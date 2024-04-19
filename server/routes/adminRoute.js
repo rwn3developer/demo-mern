@@ -45,6 +45,20 @@ routes.get('/category/viewcategory', verifyToken, async (req, res) => {
     }
 })
 
+routes.delete('/category/deletecategory',verifyToken,async(req,res)=>{
+    try{
+        let id = req.query.id;
+        let data = await Category.findByIdAndDelete(id);
+        return res.status(200).send({
+            success : true,
+            message : "Category successfully delete"
+        })
+    }catch(err){
+        console.log(err);
+        return false;
+    }
+})
+
 
 
 
