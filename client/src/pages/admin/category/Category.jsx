@@ -6,37 +6,64 @@ import { useNavigate } from 'react-router-dom'
 
 const Category = () => {
   const navigate = useNavigate()
-  let [token, setToken] = useState("");
+  const [auth, setAuth] = useAuth()
   const [category, setCategory] = useState([])
-  const [categoryname,setCategoryname] = useState("");
+  const [categoryname, setCategoryname] = useState("");
+  const [editid, setEditid] = useState("");
 
-  //get token 
+
+
+  //token and role wise authenticated
   useEffect(() => {
-    let userLogin = JSON.parse(localStorage.getItem('auth'));
-    setToken(userLogin.token)
-    getCategory()
-  }, [token])
-
+    if (!auth?.token) {
+      navigate('/login')
+    }
+  })
 
   //add category using async await method
-  const handleCategory = async(e) => {
+  const handleCategory = async (e) => {
     e.preventDefault();
-    let add = await fetch(`http://localhost:8000/admin/category/addcategory`,{
-      method : "POST",
-      headers : {
-        'Content-Type' : 'application/json',
-        Authorization : `Bearer ${token}`
-      },
-      body : JSON.stringify({
-        name : categoryname
+
+    //if editid not null category edit else category insert
+    if (editid) {
+        let edit = await fetch(`http://localhost:8000/admin/category/updatecategory?id=${editid}`,{
+          method : "PUT",
+          headers : {
+            'Content-Type' : 'application/json',
+            Authorization : `Bearer ${auth?.token}`
+          },
+          body : JSON.stringify({
+            name : categoryname
+          })
+        })
+        let data = await edit.json();
+        if(data.success){
+          alert(data.message);
+          setEditid("")
+          setCategoryname("")
+          getCategory()
+        }
+     
+    } else {
+      let add = await fetch(`http://localhost:8000/admin/category/addcategory`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${auth?.token}`
+        },
+        body: JSON.stringify({
+          name: categoryname
+        })
       })
-    })
-    let msg = await add.json();
-    if(msg.success){
-      alert(msg.message);
-      setCategoryname("")
-      getCategory()
+      let msg = await add.json();
+      if (msg.success) {
+        alert(msg.message);
+        setCategoryname("")
+        getCategory()
+      }
     }
+
+
   }
 
 
@@ -46,7 +73,7 @@ const Category = () => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${auth?.token}`
       }
     })
       .then(data => data.json())
@@ -57,13 +84,18 @@ const Category = () => {
       })
   }
 
+  //get allcategory
+  useEffect(() => {
+    getCategory()
+  }, [])
+
   //delete category by token
   const deleteCategory = (id) => {
     fetch(`http://localhost:8000/admin/category/deletecategory?id=${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${auth?.token}`
       }
     })
       .then((data) => data.json())
@@ -75,6 +107,23 @@ const Category = () => {
         return false
       })
   }
+
+  //edit category by token
+  const editCategory = async (id) => {
+    let rec = await fetch(`http://localhost:8000/admin/category/editcategory?id=${id}`, {
+      method: "GET",
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${auth?.token}`
+      },
+    })
+    let data = await rec.json()
+    setCategoryname(data.singlecategory.name)
+    setEditid(data.singlecategory._id)
+  }
+
+
+
 
 
 
@@ -107,13 +156,22 @@ const Category = () => {
 
 
                           <form onSubmit={handleCategory}>
+                            <input type="hidden" value={editid} />
                             <div className="mb-3">
                               <label htmlFor="exampleInputEmail1" className="form-label">Add Category</label>
-                              <input type="text" className="form-control" onChange={ (e) => setCategoryname(e.target.value) } value={categoryname} />
+                              <input type="text" className="form-control" onChange={(e) => setCategoryname(e.target.value)} value={categoryname} />
                             </div>
 
                             <div lassName="modal-footer">
-                              <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">Submit</button>
+                              {
+                                editid ? (
+                                  <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">Edit</button>
+
+                                ) : (
+                                  <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">Submit</button>
+
+                                )
+                              }
                               <button type="button" className="btn btn-secondary mx-2" data-bs-dismiss="modal">Close</button>
                             </div>
 
@@ -149,6 +207,7 @@ const Category = () => {
                             <td>{item.name}</td>
                             <td>
                               <button onClick={() => deleteCategory(item._id)} className='btn btn-danger btn-sm'>Delete</button>
+                              <button onClick={() => editCategory(item._id)} data-bs-toggle="modal" data-bs-target="#exampleModal" className='btn btn-primary btn-sm mx-2'>Edit</button>
                             </td>
                           </tr>
                         )

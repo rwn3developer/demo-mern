@@ -9,20 +9,13 @@ const Dashboard = () => {
     const navigate = useNavigate();
     const [auth, setAuth] = useAuth();
 
-    let data = JSON.parse(localStorage.getItem('auth'))
-    
-
     //role base auth
-
     useEffect(()=>{
-        if(!data || data.user.role === "user"){
+        if(!auth?.token || auth?.user?.role === "user"){
             navigate('/login')
         }
-    },[])
+    })
    
-
-   
-
     return (
         <>
             <Header /><br></br><br></br>

@@ -1,8 +1,20 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Leftsidebar from '../Leftsidebar'
 import Header from '../../../component/Header'
+import { useAuth } from '../../../context/Auth'
+import { useNavigate } from 'react-router-dom'
 
 const AdminProduct = () => {
+
+    const navigate = useNavigate()
+    const [auth,setAuth] = useAuth();
+
+    useEffect(()=>{
+        if(!auth?.token || auth?.user?.role === "user"){
+            navigate('/login')
+        }
+    })
+
     return (
         <>
             <Header /><br></br><br></br>
