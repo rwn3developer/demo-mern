@@ -4,7 +4,7 @@ const routes = express.Router();
 
 const Product = require('../models/productModel');
 
-const mongoose  = require('mongoose')
+const {verifyToken} = require('../middleware/verifyToken')
 
 routes.get('/', async (req, res) => {
   const { page = 1, limit = 3, category, price , keyword, marketstatus } = req.query; 
@@ -49,6 +49,23 @@ routes.get('/', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+
+//admin product view api
+routes.get('/adminviewproduct',verifyToken,async(req,res)=>{
+    try{
+      let product = await Product.find({});
+      return res.status(200).send({
+        success : true,
+        message : "Product successfully fetch",
+        products : product
+      })
+    }catch(err){
+      console.log(err);
+      return false;
+    }
+})
+
 
 routes.post('/addproduct', async (req, res) => {
   try {
