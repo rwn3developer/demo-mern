@@ -54,11 +54,25 @@ routes.get('/', async (req, res) => {
 //admin product view api
 routes.get('/adminviewproduct',verifyToken,async(req,res)=>{
     try{
-      let product = await Product.find({});
+
+      const page = req.query.page;
+      const limit = req.query.limit;
+      const skip = (page - 1) * limit;
+
+      let product = await Product.find({})
+      .skip(skip)
+      .limit(limit)
+
+      
+
+      const totalCount = await Product.find({});
+      
       return res.status(200).send({
         success : true,
         message : "Product successfully fetch",
-        products : product
+        products : product,
+        currentPage : parseInt(page),
+        totalPages : Math.ceil(totalCount.length / limit),
       })
     }catch(err){
       console.log(err);
