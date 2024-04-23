@@ -98,11 +98,10 @@ routes.put('/category/updatecategory',verifyToken,async(req,res)=>{
 routes.put('/product/updatemarketstatus',verifyToken,async(req,res)=>{
     try{
         let id = req.query.id
-        let status = req.body.status; 
-        console.log(id);
-
+        let status = req.body.mstatus; 
+        console.log(status)
         let data = await Product.findByIdAndUpdate(id,{
-            marketstatus : status
+            marketstatus : status,
         })
 
         

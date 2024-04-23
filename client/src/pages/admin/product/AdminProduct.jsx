@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Leftsidebar from '../Leftsidebar'
 import Header from '../../../component/Header'
 import { useAuth } from '../../../context/Auth'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const AdminProduct = () => {
 
@@ -12,7 +12,7 @@ const AdminProduct = () => {
     const [status, setStatus] = useState(["best", "latest", "upcomming"]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0)
-    const [marketstatus,setMarketStatus] = useState("");
+    const [marketstatus, setMarketStatus] = useState("");
 
     const pageNumber = [...Array(totalPages + 1).keys()].slice(1)
 
@@ -40,22 +40,21 @@ const AdminProduct = () => {
     }
 
     //market status update
-    const marketStatusEdit = async(e,id) => {
-        let status = e.target.value;
-        
-        let data = await fetch(`http://localhost:8000/admin/product/updatemarketstatus?id=${id}`,{
-            method : "PUT",
-            headers : {
-                'Content-Type' : 'application/json',
-                Authorization : `Bearer ${auth?.token}`,
+    const marketStatusEdit = async (value, id) => {
+
+        let d = await fetch(`http://localhost:8000/admin/product/updatemarketstatus?id=${id}`, {
+            method: "put",
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${auth?.token}`,
             },
-            body : JSON.stringify({
-                status : status
+            body: JSON.stringify({
+                mstatus: value
             })
         })
-        let res = await data.json();
+        let res = await d.json();
         console.log(res);
-        if(res.success){
+        if (res.success) {
             alert(res.message)
             getProduct()
         }
@@ -97,8 +96,15 @@ const AdminProduct = () => {
                             <h5 className="card-header">Product</h5>
 
                             <div className='d-flex justify-content-end p-3'>
-                                <button className='btn btn-success'>Add</button>
+                                <Link to={`/admin/addproduct`}>
+                                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">
+                                        Add
+                                    </button>
+                                </Link>
                             </div>
+
+
+
 
                             <div className="card-body">
                                 <table className='table table-striped table-hove'>
@@ -124,7 +130,7 @@ const AdminProduct = () => {
                                                         </td>
                                                         <td>{p.price}</td>
                                                         <td>
-                                                            <select onChange={ (e) =>  marketStatusEdit(e,p._id) } className='form-control w-75'>
+                                                            <select onChange={(e) => marketStatusEdit(e.target.value, p._id)} className='form-control w-75'>
                                                                 <option>---select status---</option>
                                                                 {
                                                                     status.map((mstatus) => {
@@ -133,7 +139,7 @@ const AdminProduct = () => {
                                                                             p.marketstatus === mstatus ? (
                                                                                 <option value={p.marketstatus} selected>{p.marketstatus}</option>
                                                                             ) : (
-                                                                                <option value={mstatus}>{mstatus}</option>
+                                                                                <option>{mstatus}</option>
                                                                             )
                                                                         )
 

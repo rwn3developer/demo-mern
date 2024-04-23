@@ -7,6 +7,7 @@ import Cart from "./pages/Cart";
 import Dashboard from "./pages/admin/Dashboard";
 import Category from "./pages/admin/category/Category";
 import AdminProduct from "./pages/admin/product/AdminProduct";
+import AdminAddProduct from "./pages/admin/product/AdminAddProduct";
 
 function App() {
   return (
@@ -26,6 +27,9 @@ function App() {
           <Route path="admin/dashboard" element={<Dashboard/>}/>
           <Route path="admin/category" element={<Category/>}/>
           <Route path="admin/product" element={<AdminProduct/>}/>
+          <Route path="admin/addproduct" element={<AdminAddProduct/>}/>
+
+          
 
           
 
