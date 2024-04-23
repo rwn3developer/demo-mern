@@ -63,8 +63,6 @@ routes.get('/adminviewproduct',verifyToken,async(req,res)=>{
       .skip(skip)
       .limit(limit)
 
-      
-
       const totalCount = await Product.find({});
       
       return res.status(200).send({
@@ -101,6 +99,10 @@ routes.post('/addproduct', async (req, res) => {
     return false;
   }
 })
+
+
+
+
 
 
 

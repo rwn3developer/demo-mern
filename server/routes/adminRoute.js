@@ -4,6 +4,8 @@ const routes = express.Router();
 
 const Category = require('../models/categoryModel')
 
+const Product = require('../models/productModel')
+
 const { verifyToken } = require('../middleware/verifyToken');
 
 //category add by admin side with token
@@ -84,6 +86,29 @@ routes.put('/category/updatecategory',verifyToken,async(req,res)=>{
         return res.status(200).send({
             success : true,
             message : "Category Successfully Update",
+        })
+    }catch(err){
+        console.log(err);
+        return false;
+    }
+})
+
+//update marketstatus by admin side
+
+routes.put('/product/updatemarketstatus',verifyToken,async(req,res)=>{
+    try{
+        let id = req.query.id
+        let status = req.body.status; 
+        console.log(id);
+
+        let data = await Product.findByIdAndUpdate(id,{
+            marketstatus : status
+        })
+
+        
+        return res.status(200).send({
+            success : true,
+            message : "Status successfully changed",
         })
     }catch(err){
         console.log(err);

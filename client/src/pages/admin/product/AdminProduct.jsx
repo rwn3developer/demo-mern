@@ -12,6 +12,7 @@ const AdminProduct = () => {
     const [status, setStatus] = useState(["best", "latest", "upcomming"]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0)
+    const [marketstatus,setMarketStatus] = useState("");
 
     const pageNumber = [...Array(totalPages + 1).keys()].slice(1)
 
@@ -36,6 +37,29 @@ const AdminProduct = () => {
             setTotalPages(res.totalPages);
             setProducts(res.products)
         }
+    }
+
+    //market status update
+    const marketStatusEdit = async(e,id) => {
+        let status = e.target.value;
+        
+        let data = await fetch(`http://localhost:8000/admin/product/updatemarketstatus?id=${id}`,{
+            method : "PUT",
+            headers : {
+                'Content-Type' : 'application/json',
+                Authorization : `Bearer ${auth?.token}`,
+            },
+            body : JSON.stringify({
+                status : status
+            })
+        })
+        let res = await data.json();
+        console.log(res);
+        if(res.success){
+            alert(res.message)
+            getProduct()
+        }
+
     }
 
 
@@ -100,16 +124,16 @@ const AdminProduct = () => {
                                                         </td>
                                                         <td>{p.price}</td>
                                                         <td>
-                                                            <select className='form-control w-75'>
+                                                            <select onChange={ (e) =>  marketStatusEdit(e,p._id) } className='form-control w-75'>
                                                                 <option>---select status---</option>
                                                                 {
                                                                     status.map((mstatus) => {
 
                                                                         return (
                                                                             p.marketstatus === mstatus ? (
-                                                                                <option selected>{p.marketstatus}</option>
+                                                                                <option value={p.marketstatus} selected>{p.marketstatus}</option>
                                                                             ) : (
-                                                                                <option>{mstatus}</option>
+                                                                                <option value={mstatus}>{mstatus}</option>
                                                                             )
                                                                         )
 
