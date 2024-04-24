@@ -6,6 +6,25 @@ const Category = require('../models/categoryModel')
 
 const Product = require('../models/productModel')
 
+const cloudinary = require('../config/cloudinaryConfig')
+
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+
+const multer = require('multer')
+
+const storage = new CloudinaryStorage({
+    cloudinary,
+    params: {
+        folder: 'ecommerce',
+        allowedFormats: ['jpeg', 'png', 'jpg'],
+    }                                                              
+}); 
+
+let upload = multer({storage : storage}).single('image')
+
+
+
+
 const { verifyToken } = require('../middleware/verifyToken');
 
 //category add by admin side with token
@@ -112,6 +131,19 @@ routes.put('/product/updatemarketstatus',verifyToken,async(req,res)=>{
     }catch(err){
         console.log(err);
         return false;
+    }
+})
+
+
+//admin side product add 
+
+routes.post('/product/addproduct',upload,verifyToken,async(req,res)=>{
+    try{
+        let res = await cloudinary.uploader.upload(req.file.path);
+        console.log(res);
+    }catch(err){
+        console.log(err);
+        return false; 
     }
 })
 
