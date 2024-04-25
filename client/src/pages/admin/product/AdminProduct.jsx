@@ -83,6 +83,27 @@ const AdminProduct = () => {
         }
     }
 
+
+    //product delete
+    const deleteProduct = async (id) => {
+        try {
+            let data = await fetch(`http://localhost:8000/admin/product/deleteproduct?id=${id}`, {
+                method: "DELETE",
+                headers: {
+                    'Content-Type' : 'application/json',
+                    Authorization: `Bearer ${auth?.token}`
+                },
+            });
+            let res = await data.json();
+            if (res.success) {
+                alert(res.message)
+            }
+        } catch (err) {
+            console.log(err);
+            return false
+        }
+    }
+
     return (
         <>
             <Header /><br></br><br></br>
@@ -142,11 +163,12 @@ const AdminProduct = () => {
                                                                                 <option>{mstatus}</option>
                                                                             )
                                                                         )
-
-
                                                                     })
                                                                 }
                                                             </select>
+                                                        </td>
+                                                        <td>
+                                                            <button onClick={() => deleteProduct(p._id)} className='btn btn-danger btn-sm'>Delete</button>
                                                         </td>
                                                     </tr>
                                                 )

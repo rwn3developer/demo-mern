@@ -17,13 +17,10 @@ const storage = new CloudinaryStorage({
     params: {
         folder: 'ecommerce',
         allowedFormats: ['jpeg', 'png', 'jpg'],
-    }                                                              
-}); 
+    }
+});
 
-let upload = multer({storage : storage}).single('image')
-
-
-
+let upload = multer({ storage: storage }).single('image')
 
 const { verifyToken } = require('../middleware/verifyToken');
 
@@ -40,9 +37,9 @@ routes.post('/category/addcategory', verifyToken, async (req, res) => {
             name: req.body.name
         })
         return res.status(200).send({
-            success : true,
-            message : "Category successfully add",
-            category : add
+            success: true,
+            message: "Category successfully add",
+            category: add
         })
     } catch (err) {
         console.log(err);
@@ -54,10 +51,10 @@ routes.post('/category/addcategory', verifyToken, async (req, res) => {
 routes.get('/category/viewcategory', verifyToken, async (req, res) => {
     try {
         let category = await Category.find({});
-       
+
         return res.status(200).send({
-            success : true,
-            message : "Category successfully fetch",
+            success: true,
+            message: "Category successfully fetch",
             category
         })
     } catch (err) {
@@ -67,86 +64,139 @@ routes.get('/category/viewcategory', verifyToken, async (req, res) => {
 })
 
 //category view by admin side with token
-routes.delete('/category/deletecategory',verifyToken,async(req,res)=>{
-    try{
+routes.delete('/category/deletecategory', verifyToken, async (req, res) => {
+    try {
         let id = req.query.id;
         let data = await Category.findByIdAndDelete(id);
         return res.status(200).send({
-            success : true,
-            message : "Category successfully delete"
+            success: true,
+            message: "Category successfully delete"
         })
-    }catch(err){
+    } catch (err) {
         console.log(err);
         return false;
     }
 })
 
-routes.get('/category/editcategory',verifyToken,async(req,res)=>{
-    try{
+//single category get by admin with token
+routes.get('/category/editcategory', verifyToken, async (req, res) => {
+    try {
         let id = req.query.id;
         let data = await Category.findById(id);
         return res.status(200).send({
-            success : true,
-            message : "Category fetch",
-            singlecategory : data
+            success: true,
+            message: "Category fetch",
+            singlecategory: data
         })
-    }catch(err){
+    } catch (err) {
         console.log(err);
         return false;
     }
 })
 
-routes.put('/category/updatecategory',verifyToken,async(req,res)=>{
-    try{
+//category edit by admin with token
+routes.put('/category/updatecategory', verifyToken, async (req, res) => {
+    try {
         let id = req.query.id;
-        let data = await Category.findByIdAndUpdate(id,{
-            name : req.body.name
+        let data = await Category.findByIdAndUpdate(id, {
+            name: req.body.name
         })
         return res.status(200).send({
-            success : true,
-            message : "Category Successfully Update",
+            success: true,
+            message: "Category Successfully Update",
         })
-    }catch(err){
+    } catch (err) {
         console.log(err);
         return false;
     }
 })
 
 //update marketstatus by admin side
-
-routes.put('/product/updatemarketstatus',verifyToken,async(req,res)=>{
-    try{
+routes.put('/product/updatemarketstatus', verifyToken, async (req, res) => {
+    try {
         let id = req.query.id
-        let status = req.body.mstatus; 
+        let status = req.body.mstatus;
         console.log(status)
-        let data = await Product.findByIdAndUpdate(id,{
-            marketstatus : status,
+        let data = await Product.findByIdAndUpdate(id, {
+            marketstatus: status,
         })
 
-        
+
         return res.status(200).send({
-            success : true,
-            message : "Status successfully changed",
+            success: true,
+            message: "Status successfully changed",
         })
-    }catch(err){
+    } catch (err) {
         console.log(err);
         return false;
     }
 })
 
 
-//admin side product add 
+//admin side product add with token
+routes.post('/product/addproduct', upload, verifyToken, async (req, res) => {
+    try {
+        const { category, name, image, price, description, marketstatus } = req.body;
 
-routes.post('/product/addproduct',upload,verifyToken,async(req,res)=>{
-    try{
-        let res = await cloudinary.uploader.upload(req.file.path);
-        console.log(res);
-    }catch(err){
+        let imageUrl = await cloudinary.uploader.upload(req.file.path);
+
+        let add = await Product.create({
+            categoryId: category,
+            name: name,
+            price: price,
+            description: description,
+            image: imageUrl.secure_url,
+            marketstatus: marketstatus 
+        })
+        return res.status(200).send({
+            success: true,
+            message: "Product successfully add",
+            product: add
+        })
+    } catch (err) {
         console.log(err);
-        return false; 
+        return false;
     }
 })
 
+//delete product by admin with token
+routes.delete('/product/deleteproduct', verifyToken, async (req, res) => {
+    try {
+        let id = req.query.id
+        const record = await Product.findById(id);
+        if (!record) {
+            return res.status(404).send({
+                success: false,
+                message: "Product not found"
+            })
+        }
+        if (record.image) {
+            // List images in the folder
+            const result = await cloudinary.api.resources({
+                type: 'upload',
+                prefix: `ecommerce/`
+            });
+
+            if (!result.resources || result.resources.length === 0) {
+                return res.status(404).json({ message: 'No images found in the specified folder' });
+            }
+
+            // Extract public IDs of images in the folder
+            const publicIds = result.resources.map((resource) => resource.public_id);
+
+            // Delete images in the folder
+            await cloudinary.api.delete_resources(publicIds);
+        }
+        await Product.findByIdAndDelete(id);
+        return res.status(200).send({
+            success: true,
+            message: "Product Successfully Delete",
+        })
+    } catch (err) {
+        console.log(err);;
+        return false;
+    }
+})
 
 
 

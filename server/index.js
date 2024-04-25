@@ -7,7 +7,7 @@ const app = express();
 const cors = require('cors'); 
 
 
-const db = require('./config/db')  
+const db = require('./config/db')   
  
 app.use(cors());
 

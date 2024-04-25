@@ -13,10 +13,6 @@ const prouctSchema = mongoose.Schema({
         type : Number,
         required : true
     },
-    qty : {
-        type : Number,
-        required : true
-    },
     description : {
         type : String,
         required : true
@@ -25,6 +21,14 @@ const prouctSchema = mongoose.Schema({
         type : String,
         required : true
     },
+    // public_id : {
+    //     type : String,
+    //     required : true
+    // },
+    marketstatus : {
+        type : String,
+        required : true
+    }
 })
 
 const product = mongoose.model('product',prouctSchema);
