@@ -21,10 +21,10 @@ const prouctSchema = mongoose.Schema({
         type : String,
         required : true
     },
-    // public_id : {
-    //     type : String,
-    //     required : true
-    // },
+    public_id : {
+        type : String,
+        required : true
+    },
     marketstatus : {
         type : String,
         required : true

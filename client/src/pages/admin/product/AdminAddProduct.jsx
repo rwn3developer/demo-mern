@@ -74,7 +74,7 @@ const AdminAddProduct = () => {
             let res = await data.json();
             if(res.success){
                 console.log(res);
-                alert(res.message)
+                alert("Product successfully add")
             }
             setCategory("")
             setName("");

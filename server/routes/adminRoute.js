@@ -8,21 +8,24 @@ const Product = require('../models/productModel')
 
 const cloudinary = require('../config/cloudinaryConfig')
 
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-
 const multer = require('multer')
 
-const storage = new CloudinaryStorage({
-    cloudinary,
-    params: {
-        folder: 'ecommerce',
-        allowedFormats: ['jpeg', 'png', 'jpg'],
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads/'); // Uploads will be stored in the 'uploads' directory
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname); // Use the original file name as the filename
     }
-});
+  });
+  
+  const upload = multer({ storage: storage }).single('image'); 
 
-let upload = multer({ storage: storage }).single('image')
+
 
 const { verifyToken } = require('../middleware/verifyToken');
+
+//category operation
 
 //category add by admin side with token
 routes.post('/category/addcategory', verifyToken, async (req, res) => {
@@ -111,6 +114,9 @@ routes.put('/category/updatecategory', verifyToken, async (req, res) => {
     }
 })
 
+
+//product operation
+
 //update marketstatus by admin side
 routes.put('/product/updatemarketstatus', verifyToken, async (req, res) => {
     try {
@@ -134,7 +140,7 @@ routes.put('/product/updatemarketstatus', verifyToken, async (req, res) => {
 
 
 //admin side product add with token
-routes.post('/product/addproduct', upload, verifyToken, async (req, res) => {
+routes.post('/product/addproduct', upload,verifyToken, async (req, res) => {
     try {
         const { category, name, image, price, description, marketstatus } = req.body;
 
@@ -146,7 +152,8 @@ routes.post('/product/addproduct', upload, verifyToken, async (req, res) => {
             price: price,
             description: description,
             image: imageUrl.secure_url,
-            marketstatus: marketstatus 
+            public_id : imageUrl.public_id,
+            marketstatus: marketstatus
         })
         return res.status(200).send({
             success: true,
@@ -164,36 +171,85 @@ routes.delete('/product/deleteproduct', verifyToken, async (req, res) => {
     try {
         let id = req.query.id
         const record = await Product.findById(id);
-        if (!record) {
+        if(!record){
             return res.status(404).send({
-                success: false,
-                message: "Product not found"
-            })
-        }
-        if (record.image) {
-            // List images in the folder
-            const result = await cloudinary.api.resources({
-                type: 'upload',
-                prefix: `ecommerce/`
-            });
-
-            if (!result.resources || result.resources.length === 0) {
-                return res.status(404).json({ message: 'No images found in the specified folder' });
+                        success: false,
+                        message: "Product not found"
+                    })
             }
 
-            // Extract public IDs of images in the folder
-            const publicIds = result.resources.map((resource) => resource.public_id);
-
-            // Delete images in the folder
-            await cloudinary.api.delete_resources(publicIds);
-        }
-        await Product.findByIdAndDelete(id);
-        return res.status(200).send({
-            success: true,
-            message: "Product Successfully Delete",
-        })
+            await cloudinary.uploader.destroy(record.public_id)
+            await Product.findByIdAndDelete(id);
+            return res.status(200).send({
+                success : true,
+                message : "Product successfully delete"
+            })
     } catch (err) {
         console.log(err);;
+        return false;
+    }
+})
+
+//update product by admin with token
+routes.put('/product/updateproduct', verifyToken, async (req, res) => {
+    try {
+        let id = req.query.id;
+        const { category, name, image, price, description, marketstatus } = req.body;
+        // console.log(req.file);
+        if (req.file) {
+            const record = await Product.findById(id);
+            if (!record) {
+                return res.status(404).send({
+                    success: false,
+                    message: "Product not found"
+                })
+            }
+            //remove old image in folder
+          
+                // List images in the folder
+                const result = await cloudinary.api.resources({
+                    type: 'upload',
+                    prefix: 'ecommerce/'
+                });
+
+                console.log(result);
+
+                // if (!result.resources || result.resources.length === 0) {
+                //     console.log("done");
+                //     return res.status(404).json({ message: 'No images found in the specified folder' });
+                // }
+
+                // Extract public IDs of images in the folder
+                const publicIds = result.resources.map((resource) => resource.public_id);
+
+                //new image upload 
+                let imageUrl = await cloudinary.uploader.upload(req.file.path);
+                await cloudinary.api.delete_resources(publicIds);
+                await Product.findByIdAndUpdate(id, {
+                    categoryId: category,
+                    name: name,
+                    price: price,
+                    description: description,
+                    image: imageUrl.secure_url,
+                    marketstatus: marketstatus
+                })
+                return res.status(200).send({
+                    success: true,
+                    message: "Product successfully update"
+                })
+               
+
+                // Delete images in the folder
+                
+                
+            
+
+
+        } else {
+
+        }
+    } catch (err) {
+        console.log(err);
         return false;
     }
 })
