@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react'
 import Leftsidebar from '../Leftsidebar'
 import Header from '../../../component/Header'
 import { useAuth } from '../../../context/Auth'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 
-const AdminAddProduct = () => {
+const AdminEditProduct = () => {
 
+    const { id } = useParams()
     const navigate = useNavigate()
     const [auth, setAuth] = useAuth();
     const [categorydata, setCategoryData] = useState([]);
@@ -17,6 +18,7 @@ const AdminAddProduct = () => {
     const [price, setPrice] = useState("")
     const [description, setDescription] = useState("");
     const [status, setStatus] = useState("");
+    const [singleproduct, setSingleProduct] = useState({})
 
     const getCategory = async () => {
         try {
@@ -36,10 +38,47 @@ const AdminAddProduct = () => {
             return false;
         }
     }
+
+    //single product fetch
+    const getsingleProduct = async () => {
+        try {
+            let data = await fetch(`http://localhost:8000/admin/product/fetchsingleproduct?id=${id}`, {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${auth?.token}`
+                }
+            });
+            let res = await data.json();
+            return res.product
+        } catch (err) {
+            console.log(err);
+            return false
+        }
+    }
+
+
     // all category fetch
     useEffect(() => {
         getCategory()
     }, [])
+
+    
+    useEffect(() => {
+        const fetchData = async () => {
+            const product = await getsingleProduct(); // Then fetch the single product
+            setSingleProduct(product)
+            setName(product?.name)
+            setPrice(product?.price)
+            setDescription(product?.description)
+            setCategory(product?.categoryId.name)
+        };
+        fetchData();
+    }, []);
+
+
+
+
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -52,17 +91,18 @@ const AdminAddProduct = () => {
             formData.append('description', description);
             formData.append('marketstatus', status);
 
-            let data = await fetch(`http://localhost:8000/admin/product/addproduct`,{
-                method : "POST",
-                headers : {
-                    Authorization : `Bearer ${auth?.token}`
+            let data = await fetch(`http://localhost:8000/admin/product/addproduct`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${auth?.token}`
                 },
-                body : formData
+                body: formData
             });
             let res = await data.json();
-            if(res.success){
-                console.log(res);
+            if (res.success) {
+
                 alert("Product successfully add")
+                setSingleProduct(res.product)
             }
             setCategory("")
             setName("");
@@ -71,13 +111,9 @@ const AdminAddProduct = () => {
             setDescription("")
             setStatus("")
         } catch (err) {
-
+            console.log(err);
+            return false;
         }
-
-
-
-
-
     }
 
 
@@ -95,7 +131,7 @@ const AdminAddProduct = () => {
                     </div>
                     <div className="col-lg-9">
                         <div className="card">
-                            <h5 className="card-header">Product Add</h5>
+                            <h5 className="card-header">Product Edit</h5>
 
                             <div className='d-flex justify-content-end p-3'>
                                 <Link to={`/admin/product`}>
@@ -117,7 +153,7 @@ const AdminAddProduct = () => {
                                             {
                                                 categorydata.map((cat) => {
                                                     return (
-                                                        <option value={cat._id}>{cat.name}</option>
+                                                        <option selected value={cat._id}>{cat.name}</option>
                                                     )
                                                 })
                                             }
@@ -130,7 +166,7 @@ const AdminAddProduct = () => {
 
                                     <div className="form-group mt-3">
                                         <label htmlFor="exampleInputPassword1">Image</label>
-                                        <input type="file" onChange={(e) => setImage(e.target.files[0])}  className="form-control" />
+                                        <input type="file" onChange={(e) => setImage(e.target.files[0])} className="form-control" />
                                     </div>
 
                                     <div className="form-group mt-3">
@@ -169,4 +205,4 @@ const AdminAddProduct = () => {
     )
 }
 
-export default AdminAddProduct
+export default AdminEditProduct

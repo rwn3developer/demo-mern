@@ -169,6 +169,9 @@ const AdminProduct = () => {
                                                         </td>
                                                         <td>
                                                             <button onClick={() => deleteProduct(p._id)} className='btn btn-danger btn-sm'>Delete</button>
+                                                            <Link to={`/admin/editproduct/${p._id}`}>
+                                                                    <button  className='btn btn-primary btn-sm ms-2'>Edit</button> 
+                                                            </Link>
                                                         </td>
                                                     </tr>
                                                 )

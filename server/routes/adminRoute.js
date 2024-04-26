@@ -10,18 +10,18 @@ const cloudinary = require('../config/cloudinaryConfig')
 
 const multer = require('multer')
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'uploads/'); // Uploads will be stored in the 'uploads' directory
-    },
-    filename: function (req, file, cb) {
-      cb(null, file.originalname); // Use the original file name as the filename
-    }
-  });
+// const storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//       cb(null, 'uploads/'); // Uploads will be stored in the 'uploads' directory
+//     },
+//     filename: function (req, file, cb) {
+//       cb(null, file.originalname); // Use the original file name as the filename
+//     }
+//   });
+
+  const storage = multer.diskStorage({});
   
-  const upload = multer({ storage: storage }).single('image'); 
-
-
+const upload = multer({ storage: storage }).single('image'); 
 
 const { verifyToken } = require('../middleware/verifyToken');
 
@@ -122,7 +122,6 @@ routes.put('/product/updatemarketstatus', verifyToken, async (req, res) => {
     try {
         let id = req.query.id
         let status = req.body.mstatus;
-        console.log(status)
         let data = await Product.findByIdAndUpdate(id, {
             marketstatus: status,
         })
@@ -190,6 +189,24 @@ routes.delete('/product/deleteproduct', verifyToken, async (req, res) => {
     }
 })
 
+
+//singel product by admin with token
+routes.get('/product/fetchsingleproduct',verifyToken,async(req,res)=>{
+    try{
+        let id = req.query.id;
+        let product = await Product.findById(id).populate('categoryId');
+        console.log(product);
+        return res.status(200).send({
+            success : true,
+            message : 'record fetch successfully',
+            product : product
+        })
+    }catch(err){
+        console.log(err);
+        return false;
+    }
+})
+
 //update product by admin with token
 routes.put('/product/updateproduct', verifyToken, async (req, res) => {
     try {
@@ -197,54 +214,7 @@ routes.put('/product/updateproduct', verifyToken, async (req, res) => {
         const { category, name, image, price, description, marketstatus } = req.body;
         // console.log(req.file);
         if (req.file) {
-            const record = await Product.findById(id);
-            if (!record) {
-                return res.status(404).send({
-                    success: false,
-                    message: "Product not found"
-                })
-            }
-            //remove old image in folder
-          
-                // List images in the folder
-                const result = await cloudinary.api.resources({
-                    type: 'upload',
-                    prefix: 'ecommerce/'
-                });
-
-                console.log(result);
-
-                // if (!result.resources || result.resources.length === 0) {
-                //     console.log("done");
-                //     return res.status(404).json({ message: 'No images found in the specified folder' });
-                // }
-
-                // Extract public IDs of images in the folder
-                const publicIds = result.resources.map((resource) => resource.public_id);
-
-                //new image upload 
-                let imageUrl = await cloudinary.uploader.upload(req.file.path);
-                await cloudinary.api.delete_resources(publicIds);
-                await Product.findByIdAndUpdate(id, {
-                    categoryId: category,
-                    name: name,
-                    price: price,
-                    description: description,
-                    image: imageUrl.secure_url,
-                    marketstatus: marketstatus
-                })
-                return res.status(200).send({
-                    success: true,
-                    message: "Product successfully update"
-                })
-               
-
-                // Delete images in the folder
-                
-                
-            
-
-
+    
         } else {
 
         }

@@ -8,6 +8,7 @@ import Dashboard from "./pages/admin/Dashboard";
 import Category from "./pages/admin/category/Category";
 import AdminProduct from "./pages/admin/product/AdminProduct";
 import AdminAddProduct from "./pages/admin/product/AdminAddProduct";
+import AdminEditProduct from "./pages/admin/product/AdminEditProduct";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path="admin/category" element={<Category/>}/>
           <Route path="admin/product" element={<AdminProduct/>}/>
           <Route path="admin/addproduct" element={<AdminAddProduct/>}/>
+          <Route path="admin/editproduct/:id" element={<AdminEditProduct/>}/>
 
           
 
