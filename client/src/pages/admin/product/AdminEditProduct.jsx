@@ -18,7 +18,11 @@ const AdminEditProduct = () => {
     const [price, setPrice] = useState("")
     const [description, setDescription] = useState("");
     const [status, setStatus] = useState("");
-    const [singleproduct, setSingleProduct] = useState({})
+    const [selectcategory, setSelectCategory] = useState("")
+    const [selectmarketstatus, setSelectMarketStatus] = useState("")
+    const [singleimage, setsingleImage] = useState("")
+
+    // console.log(selectmarketstatus);
 
     const getCategory = async () => {
         try {
@@ -42,7 +46,7 @@ const AdminEditProduct = () => {
     //single product fetch
     const getsingleProduct = async () => {
         try {
-            let data = await fetch(`http://localhost:8000/admin/product/fetchsingleproduct?id=${id}`, {
+            let data = await fetch(`http://localhost:8000/admin/product/fetchsingleproduct/${id}`, {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
@@ -50,7 +54,15 @@ const AdminEditProduct = () => {
                 }
             });
             let res = await data.json();
-            return res.product
+            // console.log(res.product.categoryId.name);
+            console.log(res.product);
+            setSelectCategory(res.product.categoryId.name)
+            setName(res.product.name)
+            setPrice(res.product.price)
+            setDescription(res.product.description)
+            setsingleImage(res.product.image)
+            setSelectMarketStatus(res.product.marketstatus)
+
         } catch (err) {
             console.log(err);
             return false
@@ -63,18 +75,10 @@ const AdminEditProduct = () => {
         getCategory()
     }, [])
 
-    
+
     useEffect(() => {
-        const fetchData = async () => {
-            const product = await getsingleProduct(); // Then fetch the single product
-            setSingleProduct(product)
-            setName(product?.name)
-            setPrice(product?.price)
-            setDescription(product?.description)
-            setCategory(product?.categoryId.name)
-        };
-        fetchData();
-    }, []);
+        getsingleProduct()
+    }, [id]);
 
 
 
@@ -102,7 +106,6 @@ const AdminEditProduct = () => {
             if (res.success) {
 
                 alert("Product successfully add")
-                setSingleProduct(res.product)
             }
             setCategory("")
             setName("");
@@ -117,7 +120,7 @@ const AdminEditProduct = () => {
     }
 
 
-
+    console.log(selectmarketstatus);
 
 
 
@@ -152,8 +155,14 @@ const AdminEditProduct = () => {
                                             <option>---select category---</option>
                                             {
                                                 categorydata.map((cat) => {
+                                                    // console.log(cat.name);
                                                     return (
-                                                        <option selected value={cat._id}>{cat.name}</option>
+                                                        selectcategory == cat.name ? (
+                                                            <option value={cat._id} selected>{selectcategory}</option>
+
+                                                        ) : (
+                                                            <option value={cat._id}>{cat.name}</option>
+                                                        )
                                                     )
                                                 })
                                             }
@@ -167,6 +176,7 @@ const AdminEditProduct = () => {
                                     <div className="form-group mt-3">
                                         <label htmlFor="exampleInputPassword1">Image</label>
                                         <input type="file" onChange={(e) => setImage(e.target.files[0])} className="form-control" />
+                                        <img src={singleimage} width="100" />
                                     </div>
 
                                     <div className="form-group mt-3">
@@ -181,15 +191,22 @@ const AdminEditProduct = () => {
 
                                     <div className='form-group mt-3'>
                                         <label htmlFor="exampleInputEmail1">Market status</label>
+
                                         <select onChange={(e) => setStatus(e.target.value)} value={status} className='form-control'>
                                             <option>---select status---</option>
                                             {
                                                 mstatus.map((st) => {
+
                                                     return (
-                                                        <option value={st}>{st}</option>
+                                                        selectmarketstatus === st ? (
+                                                            <option selected value={selectmarketstatus} >{selectmarketstatus}</option>
+                                                        ) : (
+                                                            <option>{st}</option>
+                                                        )
                                                     )
                                                 })
                                             }
+
                                         </select>
                                     </div>
 

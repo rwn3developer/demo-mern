@@ -191,11 +191,10 @@ routes.delete('/product/deleteproduct', verifyToken, async (req, res) => {
 
 
 //singel product by admin with token
-routes.get('/product/fetchsingleproduct',verifyToken,async(req,res)=>{
+routes.get('/product/fetchsingleproduct/:id',verifyToken,async(req,res)=>{
     try{
-        let id = req.query.id;
+        let id = req.params.id;
         let product = await Product.findById(id).populate('categoryId');
-        console.log(product);
         return res.status(200).send({
             success : true,
             message : 'record fetch successfully',
