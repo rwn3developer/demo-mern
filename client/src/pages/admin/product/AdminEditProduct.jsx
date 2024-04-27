@@ -22,7 +22,6 @@ const AdminEditProduct = () => {
     const [selectmarketstatus, setSelectMarketStatus] = useState("")
     const [singleimage, setsingleImage] = useState("")
 
-    // console.log(selectmarketstatus);
 
     const getCategory = async () => {
         try {
@@ -55,13 +54,14 @@ const AdminEditProduct = () => {
             });
             let res = await data.json();
             // console.log(res.product.categoryId.name);
-            console.log(res.product);
             setSelectCategory(res.product.categoryId.name)
             setName(res.product.name)
             setPrice(res.product.price)
             setDescription(res.product.description)
             setsingleImage(res.product.image)
             setSelectMarketStatus(res.product.marketstatus)
+            // console.log(selectmarketstatus);
+            console.log(res.product.marketstatus);
 
         } catch (err) {
             console.log(err);
@@ -78,7 +78,7 @@ const AdminEditProduct = () => {
 
     useEffect(() => {
         getsingleProduct()
-    }, [id]);
+    });
 
 
 
@@ -120,9 +120,6 @@ const AdminEditProduct = () => {
     }
 
 
-    console.log(selectmarketstatus);
-
-
 
     return (
         <>
@@ -156,9 +153,10 @@ const AdminEditProduct = () => {
                                             {
                                                 categorydata.map((cat) => {
                                                     // console.log(cat.name);
+                                                    console.log(selectcategory);
                                                     return (
-                                                        selectcategory == cat.name ? (
-                                                            <option value={cat._id} selected>{selectcategory}</option>
+                                                          "mobile" == selectcategory ? (
+                                                            <option selected value={cat._id} >{selectcategory}</option>
 
                                                         ) : (
                                                             <option value={cat._id}>{cat.name}</option>
@@ -192,16 +190,16 @@ const AdminEditProduct = () => {
                                     <div className='form-group mt-3'>
                                         <label htmlFor="exampleInputEmail1">Market status</label>
 
-                                        <select onChange={(e) => setStatus(e.target.value)} value={status} className='form-control'>
+                                        <select onChange={(e) => setStatus(e.target.value)}  className='form-control'>
                                             <option>---select status---</option>
                                             {
                                                 mstatus.map((st) => {
 
                                                     return (
-                                                        selectmarketstatus === st ? (
-                                                            <option selected value={selectmarketstatus} >{selectmarketstatus}</option>
+                                                        st == selectmarketstatus ? ( 
+                                                            <option selected  value={selectmarketstatus} >{selectmarketstatus}</option>
                                                         ) : (
-                                                            <option>{st}</option>
+                                                           <option>{st}</option>
                                                         )
                                                     )
                                                 })
