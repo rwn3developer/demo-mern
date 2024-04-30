@@ -177,7 +177,7 @@ routes.delete('/product/deleteproduct', verifyToken, async (req, res) => {
                     })
             }
 
-            await cloudinary.uploader.destroy(record.public_id)
+            await cloudinary.uploader.destroy(record.public_id) 
             await Product.findByIdAndDelete(id);
             return res.status(200).send({
                 success : true,
@@ -207,21 +207,60 @@ routes.get('/product/fetchsingleproduct/:id',verifyToken,async(req,res)=>{
 })
 
 //update product by admin with token
-routes.put('/product/updateproduct', verifyToken, async (req, res) => {
+routes.put('/product/updateproduct/:id', upload,verifyToken, async (req, res) => {
     try {
-        let id = req.query.id;
+        let id = req.params.id;
         const { category, name, image, price, description, marketstatus } = req.body;
+        // console.log(`category name :- ${category}`);
+        // console.log(`product name :- ${name}`);
+        // console.log(`price :- ${price}`);
+        // console.log(`description :- ${description}`);
+        // console.log(`marketstatus :- ${marketstatus}`);
         // console.log(req.file);
         if (req.file) {
-    
-        } else {
+            //old image remove
+            let old = await Product.findById(id);
+            await cloudinary.uploader.destroy(old.public_id)
 
+            //new image upload in cloudynari
+            let imageUrl = await cloudinary.uploader.upload(req.file.path);
+            let up = await Product.findByIdAndUpdate(id,{
+                categoryId: category,
+                name: name,
+                price: price,
+                description: description,
+                image: imageUrl.secure_url,
+                public_id : imageUrl.public_id,
+                marketstatus: marketstatus
+            })
+            return res.status(200).send({
+                success : true,
+                message : "Product successfully update"
+            })
+        } else {
+            let old = await Product.findById(id);
+            let up = await Product.findByIdAndUpdate(id,{
+                categoryId: category,
+                name: name,
+                price: price,
+                description: description,
+                image: old.secure_url,
+                public_id : old.public_id,
+                marketstatus: marketstatus
+            })
+            return res.status(200).send({
+                success : true,
+                message : "Product successfully update"
+            })
         }
     } catch (err) {
         console.log(err);
         return false;
     }
 })
+
+
+
 
 
 

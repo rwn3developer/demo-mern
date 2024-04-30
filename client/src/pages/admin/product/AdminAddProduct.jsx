@@ -18,6 +18,13 @@ const AdminAddProduct = () => {
     const [description, setDescription] = useState("");
     const [status, setStatus] = useState("");
 
+    //check user login and check admin role
+    // useEffect(()=>{
+    //     if(auth?.token || auth?.user?.role === "user"){
+    //         navigate('/login')
+    //     }
+    // })
+
     const getCategory = async () => {
         try {
             let data = await fetch(`http://localhost:8000/category/categoryView`, {
@@ -73,11 +80,6 @@ const AdminAddProduct = () => {
         } catch (err) {
 
         }
-
-
-
-
-
     }
 
 
