@@ -56,7 +56,7 @@ routes.post('/category/addcategory', verifyToken, async (req, res) => {
     } catch (err) {
         console.log(err);
         return false;
-    }
+    } 
 })
 
 //category view by admin side with token

@@ -52,7 +52,6 @@ const AdminEditProduct = () => {
                 }
             });
             let res = await data.json();
-            setCategoryid(res.product.categoryId._id)
             setSelectCategory(res.product.categoryId.name)
             setName(res.product.name)
             setPrice(res.product.price)

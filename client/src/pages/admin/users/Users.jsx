@@ -29,6 +29,10 @@ const Users = () => {
     }
   }
 
+  const deleteUser = () => {
+
+  }
+
   useEffect(()=>{
     getUsers()
   },[])
@@ -68,8 +72,10 @@ const Users = () => {
                             <td>{item.name}</td>
                             <td>{item.email}</td>
                             <td>
-                              {/* <button onClick={() => deleteCategory(item._id)} className='btn btn-danger btn-sm'>Delete</button>
-                              <button onClick={() => editCategory(item._id)} data-bs-toggle="modal" data-bs-target="#exampleModal" className='btn btn-primary btn-sm mx-2'>Edit</button> */}
+                              <button onClick={() => deleteUser(item._id)} className='btn btn-success btn-sm mx-2'>View</button>
+                              <button onClick={() => deleteUser(item._id)} className='btn btn-danger btn-sm'>Delete</button>
+
+                              {/* <button onClick={() => editCategory(item._id)} data-bs-toggle="modal" data-bs-target="#exampleModal" className='btn btn-primary btn-sm mx-2'>Edit</button> */}
                             </td>
                           </tr>
                         )
