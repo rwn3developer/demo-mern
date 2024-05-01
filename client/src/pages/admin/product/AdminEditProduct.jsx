@@ -21,10 +21,6 @@ const AdminEditProduct = () => {
     const [selectcategory, setSelectCategory] = useState("")
     const [selectmarketstatus, setSelectMarketStatus] = useState("")
     const [singleimage, setsingleImage] = useState("")
-    const [categoryid,setCategoryid] = useState("")
-
-    const [singleproduct,setSingleProduct] = useState({}) 
-
 
     const getCategory = async () => {
         try {
@@ -69,7 +65,6 @@ const AdminEditProduct = () => {
         }
     }
 
-
     // all category fetch
     useEffect(() => {
         getCategory()
@@ -79,10 +74,6 @@ const AdminEditProduct = () => {
     useEffect(() => {
         getsingleProduct()
     },[]);
-
-
-
-
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -117,11 +108,6 @@ const AdminEditProduct = () => {
             return false;
         }
     }
- 
-
-   
-
-
 
     return (
         <>
@@ -143,11 +129,8 @@ const AdminEditProduct = () => {
                                 </Link>
                             </div>
 
-
                             <div className="card-body">
                                 <form onSubmit={handleSubmit}>
-
-
                                     <div className="form-group">
                                         <label htmlFor="exampleInputEmail1">Category</label>
                                         <select onChange={(e) => setCategory(e.target.value)} value={category}  className='form-control'>
@@ -190,7 +173,6 @@ const AdminEditProduct = () => {
 
                                     <div className='form-group mt-3'>
                                         <label htmlFor="exampleInputEmail1">Market status</label>
-
                                         <select onChange={(e) => setStatus(e.target.value)}  className='form-control'>
                                             <option>---select status---</option>
                                             {
@@ -206,11 +188,9 @@ const AdminEditProduct = () => {
                                             }
                                         </select>
                                     </div>
-
                                     <button type="submit" className="btn btn-primary mt-3">Submit</button>
                                 </form>
                             </div>
-
                         </div>
                     </div>
                 </div>
