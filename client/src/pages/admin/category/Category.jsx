@@ -11,15 +11,6 @@ const Category = () => {
   const [categoryname, setCategoryname] = useState("");
   const [editid, setEditid] = useState("");
 
-
-
-  //token and role wise authenticated
-  useEffect(() => {
-    if (!auth?.token) {
-      navigate('/login')
-    }
-  })
-
   //add category using async await method
   const handleCategory = async (e) => {
     e.preventDefault();

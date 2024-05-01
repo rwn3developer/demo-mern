@@ -26,14 +26,6 @@ const AdminEditProduct = () => {
     const [singleproduct,setSingleProduct] = useState({}) 
 
 
-    //check user login and check admin role
-    // useEffect(()=>{
-    //     if(auth?.token || auth?.user?.role === "user"){
-    //         navigate('/login')
-    //     }
-    // })
-   
-
     const getCategory = async () => {
         try {
             let data = await fetch(`http://localhost:8000/category/categoryView`, {
@@ -118,7 +110,7 @@ const AdminEditProduct = () => {
             setName("");
             setImage("")
             setPrice("")
-            setDescription("")
+            setDescription("") 
             setStatus("")
         } catch (err) {
             console.log(err);
@@ -158,7 +150,7 @@ const AdminEditProduct = () => {
 
                                     <div className="form-group">
                                         <label htmlFor="exampleInputEmail1">Category</label>
-                                        <select onChange={(e) => setCategory(e.target.value)} value={category} className='form-control'>
+                                        <select onChange={(e) => setCategory(e.target.value)} value={category}  className='form-control'>
                                             <option value="">---select category---</option> 
                                             {
                                                 categorydata.map((cat) => {

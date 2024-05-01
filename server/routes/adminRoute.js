@@ -6,27 +6,36 @@ const Category = require('../models/categoryModel')
 
 const Product = require('../models/productModel')
 
-const cloudinary = require('../config/cloudinaryConfig')
+const Users = require('../models/usersModel')
+
+const cloudinary = require('../config/cloudinaryConfig')  
 
 const multer = require('multer')
 
-// const storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//       cb(null, 'uploads/'); // Uploads will be stored in the 'uploads' directory
-//     },
-//     filename: function (req, file, cb) {
-//       cb(null, file.originalname); // Use the original file name as the filename
-//     }
-//   });
-
-  const storage = multer.diskStorage({});
+const storage = multer.diskStorage({});
   
 const upload = multer({ storage: storage }).single('image'); 
 
 const { verifyToken } = require('../middleware/verifyToken');
 
-//category operation
 
+//all user show by adminside using token
+
+routes.get('/users/adminviewuser',verifyToken,async(req,res)=>{
+    try{
+        let all = await Users.find({role:"user"});
+        return res.status(200).send({
+            success : true,
+            message : "Users fetch successfully",
+            users : all
+        })
+    }catch(err){
+        console.log(err);
+        return false;
+    }
+})
+
+//category operation
 //category add by admin side with token
 routes.post('/category/addcategory', verifyToken, async (req, res) => {
     try {
@@ -142,17 +151,17 @@ routes.put('/product/updatemarketstatus', verifyToken, async (req, res) => {
 routes.post('/product/addproduct', upload,verifyToken, async (req, res) => {
     try {
         const { category, name, image, price, description, marketstatus } = req.body;
+ 
+        let imageUrl = await cloudinary.uploader.upload(req.file.path); 
 
-        let imageUrl = await cloudinary.uploader.upload(req.file.path);
-
-        let add = await Product.create({
+        let add = await Product.create({  
             categoryId: category,
             name: name,
             price: price,
             description: description,
             image: imageUrl.secure_url,
             public_id : imageUrl.public_id,
-            marketstatus: marketstatus
+            marketstatus: marketstatus 
         })
         return res.status(200).send({
             success: true,
@@ -203,7 +212,7 @@ routes.get('/product/fetchsingleproduct/:id',verifyToken,async(req,res)=>{
     }catch(err){
         console.log(err);
         return false;
-    }
+    }  
 })
 
 //update product by admin with token
@@ -238,9 +247,9 @@ routes.put('/product/updateproduct/:id', upload,verifyToken, async (req, res) =>
                 message : "Product successfully update"
             })
         } else {
-            let old = await Product.findById(id);
-            let up = await Product.findByIdAndUpdate(id,{
-                categoryId: category,
+            let old = await Product.findById(id); 
+            let up = await Product.findByIdAndUpdate(id,{ 
+                categoryId: category, 
                 name: name,
                 price: price,
                 description: description,

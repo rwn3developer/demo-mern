@@ -16,14 +16,6 @@ const AdminProduct = () => {
 
     const pageNumber = [...Array(totalPages + 1).keys()].slice(1)
 
-
-
-    useEffect(() => {
-        if (!auth?.token || auth?.user?.role === "user") {
-            navigate('/login')
-        }
-    })
-
     const getProduct = async () => {
         let data = await fetch(`http://localhost:8000/products/adminviewproduct?page=${currentPage}&limit=5`, {
             method: 'GET',

@@ -9,12 +9,12 @@ const Dashboard = () => {
     const navigate = useNavigate();
     const [auth, setAuth] = useAuth();
 
-    //role base auth
-    useEffect(()=>{
-        if(!auth?.token || auth?.user?.role === "user"){
-            navigate('/login')
-        }
-    })
+    // //role base auth
+    // useEffect(()=>{
+    //     if(!auth?.token || auth?.user?.role === "user"){
+    //         navigate('/login')
+    //     }
+    // })
    
     return (
         <>

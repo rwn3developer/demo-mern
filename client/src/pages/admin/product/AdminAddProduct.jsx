@@ -18,12 +18,7 @@ const AdminAddProduct = () => {
     const [description, setDescription] = useState("");
     const [status, setStatus] = useState("");
 
-    //check user login and check admin role
-    // useEffect(()=>{
-    //     if(auth?.token || auth?.user?.role === "user"){
-    //         navigate('/login')
-    //     }
-    // })
+    
 
     const getCategory = async () => {
         try {
@@ -78,7 +73,8 @@ const AdminAddProduct = () => {
             setDescription("")
             setStatus("")
         } catch (err) {
-
+            console.log(err);
+            return false;
         }
     }
 
