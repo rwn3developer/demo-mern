@@ -10,7 +10,7 @@ const AdminEditProduct = () => {
     const navigate = useNavigate()
     const [auth, setAuth] = useAuth();
     const [categorydata, setCategoryData] = useState([]);
-    const [mstatus, setMStatus] = useState(["best", "latest", "upcomming"]);
+    const [mstatus, setMStatus] = useState(["best", "latest", "upcomming"]); 
 
     const [category, setCategory] = useState("");
     const [name, setName] = useState("")
@@ -191,7 +191,7 @@ const AdminEditProduct = () => {
                                     <div className='form-group mt-3'>
                                         <label htmlFor="exampleInputEmail1">Market status</label>
 
-                                        <select onChange={(e) => setStatus(e.target.value)} value={status} className='form-control'>
+                                        <select onChange={(e) => setStatus(e.target.value)}  className='form-control'>
                                             <option>---select status---</option>
                                             {
                                                 mstatus.map((st) => {
