@@ -8,6 +8,8 @@ const Product = require('../models/productModel')
 
 const Users = require('../models/usersModel')
 
+const Carts = require('../models/cartsModel')
+
 const cloudinary = require('../config/cloudinaryConfig')  
 
 const multer = require('multer')
@@ -20,7 +22,6 @@ const { verifyToken } = require('../middleware/verifyToken');
 
 
 //all user show by adminside using token
-
 routes.get('/users/adminviewuser',verifyToken,async(req,res)=>{
     try{
         let all = await Users.find({role:"user"});
@@ -32,6 +33,22 @@ routes.get('/users/adminviewuser',verifyToken,async(req,res)=>{
     }catch(err){
         console.log(err);
         return false;
+    }
+})
+
+//single user show by adminside using token
+routes.get('/users/singleuser',verifyToken,async(req,res)=>{
+    try{
+        let id = req.query.id
+        let user = await Users.findById(id);
+        return res.status(200).send({
+            success : true,
+            message : 'user successfully fetch',
+            user
+        })
+    }catch(err){
+        console.log(err);
+        return false
     }
 })
 
@@ -253,7 +270,7 @@ routes.put('/product/updateproduct/:id', upload,verifyToken, async (req, res) =>
                 name: name,
                 price: price,
                 description: description,
-                image: old.secure_url,
+                image: old.secure_url, 
                 public_id : old.public_id,
                 marketstatus: marketstatus
             })
@@ -268,7 +285,21 @@ routes.put('/product/updateproduct/:id', upload,verifyToken, async (req, res) =>
     }
 })
 
-
+//admin user wise cart show
+routes.get('/users/cart',verifyToken,async(req,res)=>{
+    try{
+        let id = req.query.id;
+        let all = await Carts.find({userId:id}).populate('categoryId');
+        return res.status(200).send({
+            success : true,
+            message : "Cart successfully fetch",
+            usercart : all
+        })
+    }catch(err){
+        console.log(err);
+        return false
+    }
+})
 
 
 

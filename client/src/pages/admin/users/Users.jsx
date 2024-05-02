@@ -2,30 +2,30 @@ import React, { useEffect, useState } from 'react'
 import Header from '../../../component/Header'
 import Leftsidebar from '../Leftsidebar'
 import { useAuth } from '../../../context/Auth'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Users = () => {
   const navigate = useNavigate()
   const [auth, setAuth] = useAuth()
-  const [users,setUsers] = useState([])
+  const [users, setUsers] = useState([])
 
-  const getUsers = async() => {
-    try{
-        let all = await fetch(`http://localhost:8000/admin/users/adminviewuser`,{
-            method : "GET",
-            headers : {
-                'Content-Type' : 'application/json',
-                Authorization : `Bearer ${auth?.token}`
-            }
-        })
-        let res = await all.json();
-        if(res.success){
-            setUsers(res.users)
+  const getUsers = async () => {
+    try {
+      let all = await fetch(`http://localhost:8000/admin/users/adminviewuser`, {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${auth?.token}`
         }
+      })
+      let res = await all.json();
+      if (res.success) {
+        setUsers(res.users)
+      }
 
-    }catch(err){
-        console.log(err);
-        return false;
+    } catch (err) {
+      console.log(err);
+      return false;
     }
   }
 
@@ -33,9 +33,9 @@ const Users = () => {
 
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     getUsers()
-  },[])
+  }, [])
 
   return (
     <>
@@ -72,7 +72,9 @@ const Users = () => {
                             <td>{item.name}</td>
                             <td>{item.email}</td>
                             <td>
-                              <button onClick={() => deleteUser(item._id)} className='btn btn-success btn-sm mx-2'>View</button>
+                              <Link to={`/admin/users/userdetails/${item._id}`}>
+                                <button className='btn btn-success btn-sm mx-2'>View</button>
+                              </Link>
                               <button onClick={() => deleteUser(item._id)} className='btn btn-danger btn-sm'>Delete</button>
 
                               {/* <button onClick={() => editCategory(item._id)} data-bs-toggle="modal" data-bs-target="#exampleModal" className='btn btn-primary btn-sm mx-2'>Edit</button> */}

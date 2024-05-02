@@ -11,6 +11,7 @@ import AdminAddProduct from "./pages/admin/product/AdminAddProduct";
 import AdminEditProduct from "./pages/admin/product/AdminEditProduct";
 import Private from "./PrivateRoute/Private";
 import Users from "./pages/admin/users/Users";
+import AdminUserDetails from "./pages/admin/users/AdminUserDetails";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
 
         <Route element={<Private/>}>
             <Route path="admin/users" element={<Users/>}/>
+            <Route path="admin/users/userdetails/:id" element={<AdminUserDetails/>}/>
             <Route path="admin/dashboard" element={<Dashboard />} />
             <Route path="admin/category" element={<Category />} />
             <Route path="admin/product" element={<AdminProduct />} />
