@@ -7,8 +7,11 @@ const app = express();
 const cors = require('cors'); 
 
 
-const db = require('./config/db')   
- 
+const {connectDb} = require('./config/db'); 
+
+//database call function
+connectDb()
+  
 app.use(cors());
 
 app.use(express.json());

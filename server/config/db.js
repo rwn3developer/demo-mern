@@ -1,15 +1,14 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
-mongoose.connect("mongodb://127.0.0.1/demo-mern");
+const connectDb = async () => {
+  try{
+    const con = await mongoose.connect(`mongodb+srv://rwnmilan:rwnmilan@cluster0.tr84nrb.mongodb.net/bestmernecommerce`);
+    console.log(`Connect Mongodb ${con.connection.host}`);
+  } catch(err){
+    console.log(`Error in Mongodb ${err}`);
+  } 
+}
 
-const db = mongoose.connection;
-
-db.on('connected',(err)=>{
-    if(err){
-        console.log(`not connectd`);
-        return false
-    }
-    console.log(`DB is conected`);
-})
-
-module.exports = db;
+module.exports = {
+    connectDb
+}
