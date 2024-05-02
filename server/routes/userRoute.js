@@ -8,9 +8,9 @@ const jwt = require('jsonwebtoken')
 
 //register user
 routes.post('/register', async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password , phone , city , address } = req.body;
     try {
-        if (!name || !email || !password) {
+        if (!name || !email || !password || !phone || !city || !address) {
             return res.status(200).send({
                 success: false,
                 message: "All filed is required"
@@ -19,7 +19,10 @@ routes.post('/register', async (req, res) => {
         let adduser = await User.create({
             name : name,
             email : email,
-            password : password
+            password : password,
+            phone : phone,
+            city : city,
+            address : address
         })
         return res.status(200).send({
             success : true,

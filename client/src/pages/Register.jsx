@@ -8,6 +8,9 @@ const Register = () => {
     const [name,setName] = useState("");
     const [email,setEmail] = useState("");
     const [password,setPassword] = useState("");
+    const [city,setCity] = useState("");
+    const [phone,setPhone] = useState("");
+    const [address,setAddress] = useState("");
 
     const handleSubmit = async(e) => {
         e.preventDefault();
@@ -15,7 +18,10 @@ const Register = () => {
             let {data} = await axios.post(`http://localhost:8000/users/register`,{
                 name : name,
                 email : email,
-                password : password
+                password : password,
+                phone : phone,
+                city : city,
+                address : address
             })
             if(data.success){
                 alert(data.message)
@@ -56,6 +62,18 @@ const Register = () => {
                                     <div className="mb-3">
                                         <label htmlFor="exampleInputPassword1" className="form-label">Password</label>
                                         <input type="password" onChange={ (e) => setPassword(e.target.value) } value={password} className="form-control" placeholder='Enter Password'/>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="exampleInputPassword1" className="form-label">Phone</label>
+                                        <input type="number" onChange={ (e) => setPhone(e.target.value) } value={phone} className="form-control" placeholder='Enter Phone'/>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="exampleInputPassword1" className="form-label">City</label>
+                                        <input type="text" onChange={ (e) => setCity(e.target.value) } value={city} className="form-control" placeholder='Enter City'/>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="exampleInputPassword1" className="form-label">Address</label>
+                                        <input type="text" onChange={ (e) => setAddress(e.target.value) } value={address} className="form-control" placeholder='Enter Address'/>
                                     </div>
                                     <button type="submit" className="btn btn-primary">Submit</button>
                                     <Link to={`/login`}>
