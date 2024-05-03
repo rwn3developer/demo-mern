@@ -6,55 +6,55 @@ import { useParams } from 'react-router-dom'
 
 const AdminUserDetails = () => {
 
-    const {id} = useParams()
-    const [auth,setAuth] = useAuth()
-    const [user,setUser] = useState({})
-    const [usercart,setUserCart] = useState([]);
-    let [total,setTotal] = useState(0)
+    const { id } = useParams()
+    const [auth, setAuth] = useAuth()
+    const [user, setUser] = useState({})
+    const [usercart, setUserCart] = useState([]);
+    let [total, setTotal] = useState(0)
 
 
-    const getSingleUser = async() => {
-        try{
-            let all = await fetch(`http://localhost:8000/admin/users/singleuser?id=${id}`,{
-                method : "GET",
-                headers : {
-                    'Content-Type' : 'application/json',
+    const getSingleUser = async () => {
+        try {
+            let all = await fetch(`http://localhost:8000/admin/users/singleuser?id=${id}`, {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
                     Authorization: `Bearer ${auth?.token}`
                 }
             })
             let res = await all.json();
-            if(res.success){
+            if (res.success) {
                 setUser(res.user)
             }
-        }catch(err){
+        } catch (err) {
             console.log(err);
             return false
         }
     }
 
-    const getUserCart = async() => {
-        try{
-            let all = await fetch(`http://localhost:8000/admin/users/cart?id=${id}`,{
-                method : "GET",
-                headers : {
-                    'Content-Type' : 'application/json',
+    const getUserCart = async () => {
+        try {
+            let all = await fetch(`http://localhost:8000/admin/users/cart?id=${id}`, {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
                     Authorization: `Bearer ${auth?.token}`
                 }
             })
             let res = await all.json();
-            if(res.success){
+            if (res.success) {
                 setUserCart(res.usercart)
             }
-        }catch(err){
+        } catch (err) {
             console.log(err);
             return false
         }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         getSingleUser()
         getUserCart()
-    },[])
+    }, [])
 
     return (
         <>
@@ -72,8 +72,20 @@ const AdminUserDetails = () => {
                                     <h5>User Details</h5>
                                 </div>
                                 <div className="card-body">
-                                    <h5 className="card-title">Name :- {user?.name}</h5>
-                                    <p className="card-text">Email :- {user?.email}</p>
+                                    <div className='row'>
+                                        <div className='col-lg-6'>
+                                            <p className="card-title">Name :- {user?.name}</p>
+                                            <p className="card-title">Email :- {user?.email}</p>
+                                            <p className="card-title">Phone :- {user?.phone}</p>
+                                        </div>
+                                        <div className='col-lg-6'>
+                                            <p className="card-title">City :- {user?.city}</p>
+                                            <p className="card-title">Address :- {user?.address}</p>
+                                        </div>
+                                    </div>
+                                   
+
+                                    
                                 </div>
                             </div>
 
@@ -96,13 +108,13 @@ const AdminUserDetails = () => {
                                     </thead>
                                     <tbody>
                                         {
-                                            usercart.map((c,index)=>{
+                                            usercart.map((c, index) => {
                                                 total = total + c.price * c.qty
                                                 return (
                                                     <tr>
                                                         <td>{++index}</td>
                                                         <td>
-                                                            <img src={c.image} width="100"/>
+                                                            <img src={c.image} width="100" />
                                                         </td>
                                                         <td></td>
                                                         <td>{c.name}</td>
@@ -115,6 +127,27 @@ const AdminUserDetails = () => {
                                         }
                                     </tbody>
                                 </table>
+                                <nav className='d-flex justify-content-center' aria-label="Page navigation example">
+                                    <ul className="pagination">
+                                        <li className="page-item">
+                                            <button className="page-link">Previous</button>
+                                        </li>
+
+                                       
+                                            <li className='active'>
+                                                <button className='page-link active'>1</button>
+                                            </li>
+
+                                            <li className='page-item'>
+                                                <button className='page-link'>2</button>
+                                            </li>
+                                    
+
+                                        <li className="page-item">
+                                            <button className="page-link">Next</button>
+                                        </li>
+                                    </ul>
+                                </nav>
                             </div>
                             <div className='card-footer'>
                                 <h5>Total :- {total}</h5>

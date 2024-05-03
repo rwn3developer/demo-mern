@@ -12,6 +12,7 @@ import AdminEditProduct from "./pages/admin/product/AdminEditProduct";
 import Private from "./PrivateRoute/Private";
 import Users from "./pages/admin/users/Users";
 import AdminUserDetails from "./pages/admin/users/AdminUserDetails";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/" element={<Home />}></Route>
         <Route path="/product" element={<Product />}></Route>
         <Route path="/cart" element={<Cart />}></Route>
+        <Route path="/profile" element={<Profile />}></Route>
 
 
 

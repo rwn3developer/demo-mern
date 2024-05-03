@@ -61,12 +61,15 @@ const Header = () => {
                                                                     User {auth?.user?.name}
                                                                 </button>
                                                             </Link>
+                                                            
                                                         </div>
                                                     )
                                                 }
-
-
                                             </li>
+                                            <li className="nav-item">
+                                                <Link to={`/profile`} className='nav-link'>Profile</Link>
+                                            </li>
+
                                         </>
 
                                     )
