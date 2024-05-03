@@ -58,4 +58,22 @@ routes.post('/login',async(req,res)=>{
     }
 })
 
+
+//user profile update
+routes.get('/profileupdate',async(req,res)=>{
+    try{ 
+        let id = req.query.id;
+        console.log(id);
+        let user = await User.findById(id);
+        return res.status(200).send({
+            success : true,
+            message : "user fetch successfully",
+            user
+        })
+    }catch(err){
+        console.log(err);
+        return false
+    }
+})
+
 module.exports = routes 

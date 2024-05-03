@@ -1,14 +1,42 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../component/Header'
+import { useAuth } from '../context/Auth';
 
 const Profile = () => {
-
+    const [auth,setAuth] = useAuth();
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [city, setCity] = useState("");
     const [phone, setPhone] = useState("");
     const [address, setAddress] = useState("");
+
+    const getUser = async() => {
+        try{
+            let data = await fetch(`http://localhost:8000/users/profileupdate?id=${auth?.user?._id}`,{
+                method : 'GET',
+                headers : {
+                    'Content-Type' : 'application/json'
+                }
+            })
+            let res = await data.json();
+           if(res.success){
+                setName(res.user.name)
+                setEmail(res.user.email)
+                setPassword(res.user.password)
+                setPhone(res.user.phone)
+                setCity(res.user.city)
+                setAddress(res.user.address)
+           }
+        }catch(err){
+            console.log(err);
+            return false;
+        }
+    }
+
+    useEffect(()=>{
+        getUser()
+    },[])
 
     return (
         <>
@@ -70,7 +98,7 @@ const Profile = () => {
                                 <div className='row'>
                                     <div className="mb-3">
                                         <label htmlFor="exampleInputEmail1" className="form-label">Email</label>
-                                        <input type="text" onChange={(e) => setName(e.target.value)} value={name} className="form-control" placeholder='Enter Email' />
+                                        <input type="text" disabled onChange={(e) => setName(e.target.value)} value={email} className="form-control" placeholder='Enter Email' />
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="exampleInputEmail1" className="form-label">New Password</label>
