@@ -68,7 +68,7 @@ const AdminAddProduct = () => {
             }
             setCategory("")
             setName("");
-            setImage("")
+            setImage([])
             setPrice("")
             setDescription("")
             setStatus("")

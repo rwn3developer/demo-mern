@@ -60,6 +60,7 @@ const Users = () => {
                       <th>ID</th>
                       <th>Name</th>
                       <th>Email</th>
+                      <th>Password</th>
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -71,6 +72,7 @@ const Users = () => {
                             <td>{++i}</td>
                             <td>{item.name}</td>
                             <td>{item.email}</td>
+                            <td>{item.password}</td>
                             <td>
                               <Link to={`/admin/users/userdetails/${item._id}`}>
                                 <button className='btn btn-success btn-sm mx-2'>View</button>

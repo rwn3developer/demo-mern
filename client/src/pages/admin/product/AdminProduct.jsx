@@ -129,6 +129,7 @@ const AdminProduct = () => {
                                             <th>Image</th>
                                             <th>Price</th>
                                             <th>Market Status</th>
+                                            <th>Likes</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -160,6 +161,7 @@ const AdminProduct = () => {
                                                                 }
                                                             </select>
                                                         </td>
+                                                        <td>{p.likes.length}</td>
                                                         <td>
                                                             <button onClick={() => deleteProduct(p._id)} className='btn btn-danger btn-sm'>Delete</button>
                                                             <Link to={`/admin/editproduct/${p._id}`}>

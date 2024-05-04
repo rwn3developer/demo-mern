@@ -63,7 +63,6 @@ routes.post('/login',async(req,res)=>{
 routes.get('/getprofile',async(req,res)=>{
     try{ 
         let id = req.query.id;
-        console.log(id);
         let user = await User.findById(id);
         return res.status(200).send({
             success : true,

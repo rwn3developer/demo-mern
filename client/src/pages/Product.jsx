@@ -132,6 +132,10 @@ const Product = () => {
 
   //likes product
   const LikeProduct = async (id) => {
+    if(!auth?.token){
+      toast.error("Login First")
+      return false;
+    }
     try {
       let all = await fetch(`http://localhost:8000/products/userLikeProduct`, {
         method: "PUT",
@@ -169,7 +173,7 @@ const Product = () => {
       })
       let res = await all.json()
       if (res.success) {
-        toast.success(res.message)
+        toast.error(res.message)
         getAllproduct()
       }
     } catch (err) {
@@ -251,7 +255,7 @@ const Product = () => {
 
             </div>
 
-            <div className="row">
+            <div className="row text-center">
               {/* all product show */}
               {
                 product && product.map((item) => {
@@ -260,7 +264,7 @@ const Product = () => {
                       <div className="card p-3">
                         <img src={item.image} style={{ objectFit: "contain", height: "180px" }} className="card-img-top" alt="..." />
                         <div className="card-body">
-                          <h5 className="card-title">Name :- {item.name}</h5>
+                          <h5 className="card-title">{item.name}</h5>
                           <h6 className="card-text">Rs. {item.price}</h6>
 
                           <div className="row justify-content-between">
@@ -271,9 +275,9 @@ const Product = () => {
                           <div className="row justify-content-between mt-3">
                             {
                               item.likes.includes(auth?.user?._id) ? (
-                                <button className="btn btn-danger btn-sm justify-content-between" onClick={() => DisLikeProduct(item._id)} style={{ width: "120px" }}>Dislikes :- {item.likes.length}</button>
+                                <button  className="btn btn-danger btn-sm justify-content-between w-100" onClick={() => DisLikeProduct(item._id)} style={{ width: "120px" }}>Dislikes :- {item.likes.length}</button>
                               ) : (
-                                <button className="btn btn-info btn-sm justify-content-between" onClick={() => LikeProduct(item._id)} style={{ width: "120px" }}>Likes :- {item.likes.length}</button>
+                                <button className="btn btn-info btn-sm justify-content-between w-100" onClick={() => LikeProduct(item._id)} style={{ width: "120px" }}>Likes :- {item.likes.length}</button>
                               )
                             }
 
