@@ -28,7 +28,10 @@ const prouctSchema = mongoose.Schema({
     marketstatus : {
         type : String,
         required : true
-    }
+    },
+    likes : [
+        {type : mongoose.Schema.Types.ObjectId,ref : "user"}
+    ]
 })
 
 const product = mongoose.model('product',prouctSchema);

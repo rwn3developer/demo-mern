@@ -89,6 +89,7 @@ const AdminProduct = () => {
             let res = await data.json();
             if (res.success) {
                 alert(res.message)
+                getProduct()
             }
         } catch (err) {
             console.log(err);

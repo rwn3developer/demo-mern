@@ -5,6 +5,8 @@ import axios from 'axios'
 import { Checkbox, Radio } from 'antd'
 import Header from '../component/Header'
 import { useAuth } from '../context/Auth'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const Product = () => {
@@ -33,7 +35,7 @@ const Product = () => {
 
   const getAllproduct = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/products?page=${currentPage}&limit=3&category=${checked}&price=${radio}&keyword=${keyword}&marketstatus=${marketstatusvalue}`);
+      const response = await axios.get(`http://localhost:8000/products?page=${currentPage}&limit=6&category=${checked}&price=${radio}&keyword=${keyword}&marketstatus=${marketstatusvalue}`);
 
       setProduct(response.data.products);
       setTotalPages(response.data.totalPages);
@@ -83,45 +85,93 @@ const Product = () => {
   //add to cart
   const AddToCart = async (id) => {
     try {
-        if (!auth.token) {
-          alert("First Login Please")
-          return false
-        } 
-        
-        let { data } = await axios.get(`http://localhost:8000/carts/product-single-record?id=${id}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${auth.token}`
-          }
+      if (!auth.token) {
+        toast.error("First Login Please")
+        return false
+      }
+
+      let { data } = await axios.get(`http://localhost:8000/carts/product-single-record?id=${id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${auth.token}`
+        }
+      })
+
+      let { product } = data;
+
+      //add cart data
+      fetch(`http://localhost:8000/carts/addcarts`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${auth?.token}`
+        },
+        body: JSON.stringify({
+          categoryId: product.categoryId,
+          productId: id,
+          name: product.name,
+          price: product.price,
+          qty: product.qty,
+          description: product.description,
+          image: product.image,
+          userId: auth.user._id
         })
-       
-        let {product} = data;
-        
-        //add cart data
-        fetch(`http://localhost:8000/carts/addcarts`,{
-          method : "POST",
-          headers : {
-            'Content-Type' : 'application/json',
-            Authorization : `Bearer ${auth?.token}`
-          },
-          body : JSON.stringify({
-            categoryId : product.categoryId,
-            productId : id,
-            name : product.name,
-            price : product.price,
-            qty : product.qty,
-            description : product.description,
-            image : product.image,
-            userId : auth.user._id
-          })
-        })
+      })
         .then(data => data.json())
-        .then((res)=>{
-          if(res.success){
-            alert(res.message)
+        .then((res) => {
+          if (res.success) {
+            toast.success(res.message)
           }
         })
-        
+
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  }
+
+  //likes product
+  const LikeProduct = async (id) => {
+    try {
+      let all = await fetch(`http://localhost:8000/products/userLikeProduct`, {
+        method: "PUT",
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${auth?.token}`
+        },
+        body: JSON.stringify({
+          postId: id
+        })
+      })
+      let res = await all.json()
+      if (res.success) {
+        toast.success(res.message)
+        getAllproduct()
+      }
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  }
+
+  //disLike product
+  const DisLikeProduct = async (id) => {
+    try {
+      let all = await fetch(`http://localhost:8000/products/userDisLikeProduct`, {
+        method: "PUT",
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${auth?.token}`
+        },
+        body: JSON.stringify({
+          postId: id
+        })
+      })
+      let res = await all.json()
+      if (res.success) {
+        toast.success(res.message)
+        getAllproduct()
+      }
     } catch (err) {
       console.log(err);
       return false;
@@ -210,14 +260,27 @@ const Product = () => {
                       <div className="card p-3">
                         <img src={item.image} style={{ objectFit: "contain", height: "180px" }} className="card-img-top" alt="..." />
                         <div className="card-body">
-                          <h5 className="card-title">{item.name}</h5>
+                          <h5 className="card-title">Name :- {item.name}</h5>
                           <h6 className="card-text">Rs. {item.price}</h6>
 
-                          <div className="row">
-                            <Link className="btn btn-primary mb-2" onClick={() => AddToCart(item._id)}>Add Cart</Link>
-
-                            <Link className="btn btn-success">Details</Link>
+                          <div className="row justify-content-between">
+                            <Link className="btn btn-primary btn-sm" onClick={() => AddToCart(item._id)} style={{ width: "120px" }}>Add Cart</Link>
+                            <Link className="btn btn-success btn-sm" style={{ width: "120px" }}>Details</Link>
                           </div>
+
+                          <div className="row justify-content-between mt-3">
+                            {
+                              item.likes.includes(auth?.user?._id) ? (
+                                <button className="btn btn-danger btn-sm justify-content-between" onClick={() => DisLikeProduct(item._id)} style={{ width: "120px" }}>Dislikes :- {item.likes.length}</button>
+                              ) : (
+                                <button className="btn btn-info btn-sm justify-content-between" onClick={() => LikeProduct(item._id)} style={{ width: "120px" }}>Likes :- {item.likes.length}</button>
+                              )
+                            }
+
+
+
+                          </div>
+
 
                         </div>
                       </div>
@@ -251,6 +314,7 @@ const Product = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   )
 }

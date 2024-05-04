@@ -3,99 +3,102 @@ import Header from '../component/Header'
 import { useAuth } from '../context/Auth'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Cart = () => {
 
     const navigate = useNavigate();
     const [auth, setAuth] = useAuth();
-    let [carts,setCart] = useState([])
-    let [total,setTotal] = useState(0)
-    
+    let [carts, setCart] = useState([])
+    let [total, setTotal] = useState(0)
 
-    const getUserCart = async() => {
-        try{
+
+    const getUserCart = async () => {
+        try {
             const headers = {
-                'Content-Type' : 'application/json',
-                Authorization : `Bearer ${auth?.token}`  
-              }
-  
-              if(auth?.user?._id){
-                let record = await axios.get(`http://localhost:8000/carts/usercart?userId=${auth?.user?._id}`,{headers});
-                setCart(record.data?.carts) 
-              }
-           
-        }catch(err){
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${auth?.token}`
+            }
+
+            if (auth?.user?._id) {
+                let record = await axios.get(`http://localhost:8000/carts/usercart?userId=${auth?.user?._id}`, { headers });
+                setCart(record.data?.carts)
+            }
+
+        } catch (err) {
             console.log(err);
-            return false; 
+            return false;
         }
     }
 
-    const deleteCart = async(id) => {
-        try{
+    const deleteCart = async (id) => {
+        try {
             const headers = {
-                'Content-Type' : 'application/json',
-                Authorization : `Bearer ${auth?.token}`  
-              }
-            let {data} = await axios.delete(`http://localhost:8000/carts/deletecart?id=${id}`,{headers});
-            if(data.success){
-                alert(data.message);
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${auth?.token}`
+            }
+            let { data } = await axios.delete(`http://localhost:8000/carts/deletecart?id=${id}`, { headers });
+            if (data.success) {
+                toast.error(data.message);
                 getUserCart()
             }
-        }catch(err){
+        } catch (err) {
             console.log(err);
             return false
         }
     }
 
-    const editCart = async(id,qty) => {
-        
-        let edit = carts.map((val)=>{
-            if(val._id == id){
+    const editCart = async (id, qty) => {
+
+        let edit = carts.map((val) => {
+            if (val._id == id) {
                 return {
                     ...val,
-                    qty : qty
+                    qty: qty
                 }
             }
             return val;
         })
         setCart(edit)
 
-        let editCart = edit.find((val)=>{
+        let editCart = edit.find((val) => {
             return val._id == id
         })
 
         let postData = {
-            qty : editCart.qty
+            qty: editCart.qty
         }
-        
 
-        try{
+
+        try {
             const headers = {
-                'Content-Type' : 'application/json',
-                Authorization : `Bearer ${auth?.token}`  
-              }
-            let {data} = await axios.put(`http://localhost:8000/carts/editcart?id=${id}`,postData,{headers})
-            if(data.success){
-                alert("Cart successfully update")
-            }else{
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${auth?.token}`
+            }
+            let { data } = await axios.put(`http://localhost:8000/carts/editcart?id=${id}`, postData, { headers })
+            if (data.success) {
+                toast.success("Cart successfully update")
+            } else {
                 alert("Something Wrong")
             }
-        }catch(err){
+        } catch (err) {
             console.log(err);
             return false;
         }
     }
 
-    
 
-    useEffect(()=>{
-        if(!auth?.token){
-            alert("Please login")
-            navigate('/login')
-            
+
+    useEffect(() => {
+        if (!auth?.token) {
+            toast.error("Please login")
+            setTimeout(()=>{
+                navigate('/login')
+            },5000)
         }
         getUserCart()
-    },[auth?.token])
+    }, [auth?.token])
 
     return (
         <>
@@ -109,6 +112,12 @@ const Cart = () => {
                                 <p className="card-title">Name :- {auth?.user?.name}</p>
                                 <hr></hr>
                                 <p className="card-text">Email :- {auth?.user?.email}</p>
+                                <hr></hr>
+                                <p className="card-text">Phone :- {auth?.user?.phone}</p>
+                                <hr></hr>
+                                <p className="card-text">City :- {auth?.user?.city}</p>
+                                <hr></hr>
+                                <p className="card-text">Address :- {auth?.user?.address}</p>
                             </div>
                         </div>
                     </div>
@@ -131,22 +140,23 @@ const Cart = () => {
                                     </thead>
                                     <tbody>
                                         {
-                                            carts && carts.map((cart,index)=>{
+                                            carts && carts.map((cart, index) => {
                                                 total = total + cart.qty * cart.price
+                                                let qt = cart.qty
                                                 return (
-                                                    <tr key={cart._id}> 
+                                                    <tr key={cart._id}>
                                                         <td>{++index}</td>
                                                         <td>
                                                             <img src={cart.image} width="50" />
                                                         </td>
                                                         <td>{cart.name}</td>
                                                         <td>
-                                                            <input type="number" onChange={ (e) => editCart(cart._id,e.target.value) } value={cart.qty} className='form-control w-25'/>
+                                                            <input type="number"   onChange={(e) => editCart(cart._id, e.target.value)} value={cart.qty} className='form-control w-25' />
                                                         </td>
                                                         <td>{cart.price}</td>
                                                         <td>{cart.price * cart.qty}</td>
                                                         <td>
-                                                            <button onClick={ () => deleteCart(cart._id) } className='btn btn-danger btn-sm'>Delete</button>
+                                                            <button onClick={() => deleteCart(cart._id)} className='btn btn-danger btn-sm'>Delete</button>
                                                         </td>
                                                     </tr>
                                                 )
@@ -170,6 +180,7 @@ const Cart = () => {
                     </div>
                 </div>
             </div>
+            <ToastContainer/>
         </>
     )
 }

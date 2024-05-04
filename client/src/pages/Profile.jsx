@@ -41,7 +41,6 @@ const Profile = () => {
             return false;
         }
     }
-
     //get user wise single record
     useEffect(() => {
         getUser()
