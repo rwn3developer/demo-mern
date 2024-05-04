@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import Header from '../component/Header'
 import { useAuth } from '../context/Auth';
+import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Profile = () => {
-    const [auth,setAuth] = useAuth();
+    const navigate = useNavigate()
+    const [auth, setAuth] = useAuth();
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -11,32 +15,96 @@ const Profile = () => {
     const [phone, setPhone] = useState("");
     const [address, setAddress] = useState("");
 
-    const getUser = async() => {
-        try{
-            let data = await fetch(`http://localhost:8000/users/profileupdate?id=${auth?.user?._id}`,{
-                method : 'GET',
-                headers : {
-                    'Content-Type' : 'application/json'
+    //change password
+    const [newpassword, setNewPassword] = useState("")
+    const [confirmpassword, setConfirmPassword] = useState("")
+
+    const getUser = async () => {
+        try {
+            let data = await fetch(`http://localhost:8000/users/getprofile?id=${auth?.user?._id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
                 }
             })
             let res = await data.json();
-           if(res.success){
+            if (res.success) {
                 setName(res.user.name)
                 setEmail(res.user.email)
                 setPassword(res.user.password)
                 setPhone(res.user.phone)
                 setCity(res.user.city)
                 setAddress(res.user.address)
-           }
-        }catch(err){
+            }
+        } catch (err) {
             console.log(err);
             return false;
         }
     }
 
-    useEffect(()=>{
+    //get user wise single record
+    useEffect(() => {
         getUser()
-    },[])
+    }, [])
+
+    const hangleProfile = async (e) => {
+        e.preventDefault()
+        try {
+            let all = await fetch(`http://localhost:8000/users/updateprofile?id=${auth?.user?._id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: name,
+                    phone: phone,
+                    city: city,
+                    address: address
+                })
+            })
+            let res = await all.json()
+            if (res.success) {
+                toast.success("Profile successfully changed")
+                setTimeout(()=>{
+                    navigate('/')
+                },5000)
+            }
+        } catch (err) {
+            console.log(err);
+            return false;
+        }
+    }
+
+    //change Password
+    const handleChangePassword = async(e) => {
+        try{
+            e.preventDefault()
+            if(newpassword === confirmpassword){
+                let all = await fetch(`http://localhost:8000/users/changepassword?id=${auth?.user?._id}`,{
+                    method : "PUT",
+                    headers : {
+                        'Content-Type' : 'application/json'
+                    },
+                    body : JSON.stringify({
+                        password : newpassword
+                    })
+                })
+                let res = await all.json();
+                if(res.success){
+                    toast.success("Password successfully changed")
+                    setTimeout(()=>{
+                        navigate('/')
+                    },5000)
+                }
+            }else{
+                toast.error("new password and confirm password not match")
+                return false;
+            }
+        }catch(err){
+            console.log(err);
+            return false
+        }
+    }
 
     return (
         <>
@@ -45,7 +113,7 @@ const Profile = () => {
                 <div className="row">
                     <div className='col-lg-6'>
                         <div className="card">
-                            <form>
+                            <form onSubmit={hangleProfile}>
                                 <div className="card-header">
                                     Change Profile
                                 </div>
@@ -96,21 +164,23 @@ const Profile = () => {
                             </div>
                             <div className="card-body">
                                 <div className='row'>
-                                    <div className="mb-3">
-                                        <label htmlFor="exampleInputEmail1" className="form-label">Email</label>
-                                        <input type="text" disabled onChange={(e) => setName(e.target.value)} value={email} className="form-control" placeholder='Enter Email' />
-                                    </div>
-                                    <div className="mb-3">
-                                        <label htmlFor="exampleInputEmail1" className="form-label">New Password</label>
-                                        <input type="text" onChange={(e) => setEmail(e.target.value)} value={email} className="form-control" placeholder='Enter new password' />
-                                    </div>
-                                    <div className="mb-3">
-                                        <label htmlFor="exampleInputPassword1" className="form-label">Confirm Password</label>
-                                        <input type="password" onChange={(e) => setPassword(e.target.value)} value={password} className="form-control" placeholder='Enter Password' />
-                                    </div>
-                                    <div className='d-flex justify-content-center' style={{marginTop:"0px"}}>
-                                        <button className='btn btn-success p-2  w-25 justify-content-center' style={{marginBottom:"8px"}}>Change Password</button>
-                                    </div>
+                                    <form onSubmit={handleChangePassword}>
+                                        <div className="mb-3">
+                                            <label htmlFor="exampleInputEmail1" className="form-label">Email</label>
+                                            <input type="text" disabled value={email} className="form-control" placeholder='Enter Email' />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="exampleInputEmail1" className="form-label">New Password</label>
+                                            <input type="password" onChange={ (e) => setNewPassword(e.target.value) } value={newpassword} className="form-control" placeholder='Enter new password' />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="exampleInputPassword1" className="form-label">Confirm Password</label>
+                                            <input type="password" onChange={ (e) => setConfirmPassword(e.target.value) } value={confirmpassword} className="form-control" placeholder='Enter Password' />
+                                        </div>
+                                        <div className='d-flex justify-content-center' style={{ marginTop: "30px" }}>
+                                            <button className='btn btn-success p-2  w-25 justify-content-center' style={{ marginBottom: "8px" }}>Change Password</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -118,6 +188,7 @@ const Profile = () => {
                     </div>
                 </div>
             </div>
+            <ToastContainer />
         </>
     )
 }

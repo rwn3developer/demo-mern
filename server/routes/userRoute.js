@@ -60,7 +60,7 @@ routes.post('/login',async(req,res)=>{
 
 
 //user profile update
-routes.get('/profileupdate',async(req,res)=>{
+routes.get('/getprofile',async(req,res)=>{
     try{ 
         let id = req.query.id;
         console.log(id);
@@ -73,6 +73,45 @@ routes.get('/profileupdate',async(req,res)=>{
     }catch(err){
         console.log(err);
         return false
+    }
+})
+
+//user change profile update
+routes.put('/updateprofile',async(req,res)=>{
+    try{
+        let id = req.query.id;
+        const {name,phone,city,address} = req.body;
+        let up = await User.findByIdAndUpdate(id,{
+            name : name,
+            phone : phone,
+            city : city,
+            address : address
+        })
+        return res.status(200).send({
+            success : true,
+            message : "Profile successfully changed",
+        })
+    }catch(err){
+        console.log(err);
+        return false;
+    }
+})
+
+//user change password
+routes.put('/changepassword',async(req,res)=>{ 
+    try{
+        let id = req.query.id;
+        const {password} = req.body;
+        let up = await User.findByIdAndUpdate(id,{
+            password : password
+        })
+        return res.status(200).send({
+            success : true,
+            message : "Password successfully changed",
+        })
+    }catch(err){
+        console.log(err);
+        return false;
     }
 })
 
