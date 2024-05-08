@@ -42,13 +42,6 @@ function App() {
             <Route path="admin/editproduct/:id" element={<AdminEditProduct />} />
         </Route>
 
-
-
-
-
-
-
-
       </Routes>
     </BrowserRouter>
   );
