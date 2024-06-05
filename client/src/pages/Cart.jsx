@@ -5,6 +5,8 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Stripe from "react-stripe-checkout"
+
 
 const Cart = () => {
 
@@ -12,6 +14,13 @@ const Cart = () => {
     const [auth, setAuth] = useAuth();
     let [carts, setCart] = useState([])
     let [total, setTotal] = useState(0)
+
+    useEffect(()=>{
+        if (!auth?.token) {
+            toast.error("Please login") 
+            navigate('/login') 
+        }
+    })
 
 
     const getUserCart = async () => {
@@ -91,14 +100,36 @@ const Cart = () => {
 
 
     useEffect(() => {
-        if (!auth?.token) {
-            toast.error("Please login")
-            setTimeout(()=>{
-                navigate('/login')
-            },5000)
-        }
         getUserCart()
     }, [auth?.token])
+
+
+    //payment getway
+
+    const handleToken = async(totalAmount,token) => {
+        try{
+            let all = await fetch(`http://localhost:8000/payments/stripe`,{
+                method : "POST",
+                headers : {
+                    'Content-Type' : 'application/json',
+                    Authorization : `${auth?.token}`
+                },
+                body : JSON.stringify({
+                    token : token.id,
+                    amount : totalAmount
+                })
+            })
+            let res = await all.json();
+            console.log(res);
+        }catch(err){
+            console.log(err);
+            return false;
+        }
+    }
+
+    const tokenHandler = (token) => {
+      handleToken(100,token)
+    }
 
     return (
         <>
@@ -175,9 +206,19 @@ const Cart = () => {
                                 <p className="card-title">Total Cart :- {carts.length}</p>
                                 <hr></hr>
                                 <button className='btn btn-success'>Rs :- {total}</button>
+                                <hr/>
+                                <Stripe
+                                    stripeKey='pk_test_51LR68RSAWUNK4wOV6OEKaxtljDqmGWvFOYpUl0Pmf5KgtuK94YvAmi77ZUvFCv36NqY1F3zASUo3WSxy2uBOZKrj00oAE7du2T'
+                                    token={tokenHandler}
+                                />
                             </div>
                         </div>
                     </div>
+
+
+                    
+               
+
                 </div>
             </div>
             <ToastContainer/>

@@ -18,7 +18,7 @@ const storage = multer.diskStorage({});
   
 const upload = multer({ storage: storage }).single('image'); 
 
-const { verifyToken } = require('../middleware/verifyToken');
+const { verifyToken, isAdmin } = require('../middleware/verifyToken');
 
 
 //all user show by adminside using token
@@ -301,7 +301,19 @@ routes.get('/users/cart',verifyToken,async(req,res)=>{
     }
 })
 
-
+//admin route
+routes.get('/admin-auth',verifyToken,isAdmin,async(req,res)=>{
+    try{
+        return res.status(200).send({
+            success : true,
+            message : 'Admin access',
+            ok : true
+        })
+    }catch(err){
+        console.log(err);
+        return false;
+    }
+})
 
 
 

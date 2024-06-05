@@ -51,11 +51,11 @@ const Login = () => {
 
     //role base auth
 
-    useEffect(()=>{
-        if(data && data.user.role==="admin"){
-            navigate('/admin/dashboard') 
-        }
-    },[])
+    // useEffect(()=>{
+    //     if(data && data.user.role==="admin"){
+    //         navigate('/admin/dashboard') 
+    //     }
+    // },[])
 
    
     return (

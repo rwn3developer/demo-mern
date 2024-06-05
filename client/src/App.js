@@ -11,7 +11,7 @@ import Category from "./pages/admin/category/Category";
 import AdminProduct from "./pages/admin/product/AdminProduct";
 import AdminAddProduct from "./pages/admin/product/AdminAddProduct";
 import AdminEditProduct from "./pages/admin/product/AdminEditProduct";
-import Private from "./PrivateRoute/Private";
+import Private from './PrivateRoute/Private';
 import Users from "./pages/admin/users/Users";
 import AdminUserDetails from "./pages/admin/users/AdminUserDetails";
 import Profile from "./pages/Profile";

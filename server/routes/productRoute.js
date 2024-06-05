@@ -4,7 +4,7 @@ const routes = express.Router();
 
 const Product = require('../models/productModel');
 
-const { verifyToken } = require('../middleware/verifyToken')
+const { verifyToken, isAdmin } = require('../middleware/verifyToken')
 
 routes.get('/', async (req, res) => {
   const { page = 1, limit = 3, category, price, keyword, marketstatus } = req.query;
@@ -52,7 +52,7 @@ routes.get('/', async (req, res) => {
 
 
 //admin product view api
-routes.get('/adminviewproduct', verifyToken, async (req, res) => {
+routes.get('/adminviewproduct', verifyToken,isAdmin, async (req, res) => {
   try {
 
     const page = req.query.page;

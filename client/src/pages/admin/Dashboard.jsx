@@ -51,17 +51,17 @@ const Dashboard = () => {
 
     const getProduct = async() => {
         try{
-            let all = await fetch(`http://localhost:8000/products`,{
-                method : 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${auth?.token}`
-                }
-            }); 
-            let res = await all.json();
-            if(res.success){
-                setProducts(res.products)
-            }
+            // let all = await fetch(`http://localhost:8000/products`,{
+            //     method : 'GET',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         Authorization: `Bearer ${auth?.token}`
+            //     }
+            // }); 
+            // let res = await all.json();
+            // if(res.success){
+            //     setProducts(res.products)
+            // }
         }catch(err){
             console.log(err);
         }

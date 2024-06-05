@@ -21,6 +21,22 @@ const verifyToken = (req, res, next) => {
     });
 }
 
+//only admin route
+const isAdmin = async(req,res,next) => {
+    try{
+        if(req.user.user.role != "admin"){
+            return res.status(403).send({
+                success: false,
+                message: 'Unauthorised access'
+            });
+        }
+        return next();
+    }catch(err){
+        console.log(err);
+        return false;
+    }
+}
+
 module.exports = {
-    verifyToken
+    verifyToken,isAdmin
 }  

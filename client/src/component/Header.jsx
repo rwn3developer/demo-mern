@@ -58,7 +58,7 @@ const Header = () => {
                                                         <div className="dropdown">
                                                             <Link to={`/admin/dashboard`}>
                                                                 <button className="btn btn-info" type="button">
-                                                                    User {auth?.user?.name}
+                                                                    Users {auth?.user?.name}
                                                                 </button>
                                                             </Link>
                                                             
