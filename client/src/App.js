@@ -31,15 +31,14 @@ function App() {
 
 
         {/* admin route */}
-
-        <Route element={<Private/>}>
-            <Route path="admin/users" element={<Users/>}/>
-            <Route path="admin/users/userdetails/:id" element={<AdminUserDetails/>}/>
-            <Route path="admin/dashboard" element={<Dashboard />} />
-            <Route path="admin/category" element={<Category />} />
-            <Route path="admin/product" element={<AdminProduct />} />
-            <Route path="admin/addproduct" element={<AdminAddProduct />} />
-            <Route path="admin/editproduct/:id" element={<AdminEditProduct />} />
+        <Route path='/admin' element={<Private/>}>
+            <Route path="users" element={<Users/>}/>
+            <Route path="users/userdetails/:id" element={<AdminUserDetails/>}/>
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="category" element={<Category />} />
+            <Route path="product" element={<AdminProduct />} />
+            <Route path="addproduct" element={<AdminAddProduct />} />
+            <Route path="editproduct/:id" element={<AdminEditProduct />} />
         </Route>
 
       </Routes>
