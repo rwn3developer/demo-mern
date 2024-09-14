@@ -10,43 +10,49 @@ const Users = require('../models/usersModel')
 
 const Carts = require('../models/cartsModel')
 
-const cloudinary = require('../config/cloudinaryConfig')  
+const SliderModel = require('../models/sliderModel');
+
+const cloudinary = require('../config/cloudinaryConfig')
 
 const multer = require('multer')
 
 const storage = multer.diskStorage({});
-  
-const upload = multer({ storage: storage }).single('image'); 
+
+const upload = multer({ storage: storage }).single('image');
+
+const slider = multer.diskStorage({});
+
+const sliderUpload = multer({ storage: slider }).single('slider');
 
 const { verifyToken, isAdmin } = require('../middleware/verifyToken');
 
 
 //all user show by adminside using token
-routes.get('/users/adminviewuser',verifyToken,async(req,res)=>{
-    try{
-        let all = await Users.find({role:"user"});
+routes.get('/users/adminviewuser', verifyToken, async (req, res) => {
+    try {
+        let all = await Users.find({ role: "user" });
         return res.status(200).send({
-            success : true,
-            message : "Users fetch successfully",
-            users : all
+            success: true,
+            message: "Users fetch successfully",
+            users: all
         })
-    }catch(err){
+    } catch (err) {
         console.log(err);
         return false;
     }
 })
 
 //single user show by adminside using token
-routes.get('/users/singleuser',verifyToken,async(req,res)=>{
-    try{
+routes.get('/users/singleuser', verifyToken, async (req, res) => {
+    try {
         let id = req.query.id
         let user = await Users.findById(id);
         return res.status(200).send({
-            success : true,
-            message : 'user successfully fetch',
+            success: true,
+            message: 'user successfully fetch',
             user
         })
-    }catch(err){
+    } catch (err) {
         console.log(err);
         return false
     }
@@ -73,7 +79,7 @@ routes.post('/category/addcategory', verifyToken, async (req, res) => {
     } catch (err) {
         console.log(err);
         return false;
-    } 
+    }
 })
 
 //category view by admin side with token
@@ -165,20 +171,20 @@ routes.put('/product/updatemarketstatus', verifyToken, async (req, res) => {
 
 
 //admin side product add with token
-routes.post('/product/addproduct', upload,verifyToken, async (req, res) => {
+routes.post('/product/addproduct', upload, verifyToken, async (req, res) => {
     try {
         const { category, name, image, price, description, marketstatus } = req.body;
- 
-        let imageUrl = await cloudinary.uploader.upload(req.file.path); 
 
-        let add = await Product.create({  
+        let imageUrl = await cloudinary.uploader.upload(req.file.path);
+
+        let add = await Product.create({
             categoryId: category,
             name: name,
             price: price,
             description: description,
             image: imageUrl.secure_url,
-            public_id : imageUrl.public_id,
-            marketstatus: marketstatus 
+            public_id: imageUrl.public_id,
+            marketstatus: marketstatus
         })
         return res.status(200).send({
             success: true,
@@ -196,19 +202,19 @@ routes.delete('/product/deleteproduct', verifyToken, async (req, res) => {
     try {
         let id = req.query.id
         const record = await Product.findById(id);
-        if(!record){
+        if (!record) {
             return res.status(404).send({
-                        success: false,
-                        message: "Product not found"
-                    })
-            }
-
-            await cloudinary.uploader.destroy(record.public_id) 
-            await Product.findByIdAndDelete(id);
-            return res.status(200).send({
-                success : true,
-                message : "Product successfully delete"
+                success: false,
+                message: "Product not found"
             })
+        }
+
+        await cloudinary.uploader.destroy(record.public_id)
+        await Product.findByIdAndDelete(id);
+        return res.status(200).send({
+            success: true,
+            message: "Product successfully delete"
+        })
     } catch (err) {
         console.log(err);;
         return false;
@@ -217,23 +223,23 @@ routes.delete('/product/deleteproduct', verifyToken, async (req, res) => {
 
 
 //singel product by admin with token
-routes.get('/product/fetchsingleproduct/:id',verifyToken,async(req,res)=>{
-    try{
+routes.get('/product/fetchsingleproduct/:id', verifyToken, async (req, res) => {
+    try {
         let id = req.params.id;
         let product = await Product.findById(id).populate('categoryId');
         return res.status(200).send({
-            success : true,
-            message : 'record fetch successfully',
-            product : product
+            success: true,
+            message: 'record fetch successfully',
+            product: product
         })
-    }catch(err){
+    } catch (err) {
         console.log(err);
         return false;
-    }  
+    }
 })
 
 //update product by admin with token
-routes.put('/product/updateproduct/:id', upload,verifyToken, async (req, res) => {
+routes.put('/product/updateproduct/:id', upload, verifyToken, async (req, res) => {
     try {
         let id = req.params.id;
         const { category, name, image, price, description, marketstatus } = req.body;
@@ -250,33 +256,33 @@ routes.put('/product/updateproduct/:id', upload,verifyToken, async (req, res) =>
 
             //new image upload in cloudynari
             let imageUrl = await cloudinary.uploader.upload(req.file.path);
-            let up = await Product.findByIdAndUpdate(id,{
+            let up = await Product.findByIdAndUpdate(id, {
                 categoryId: category,
                 name: name,
                 price: price,
                 description: description,
                 image: imageUrl.secure_url,
-                public_id : imageUrl.public_id,
+                public_id: imageUrl.public_id,
                 marketstatus: marketstatus
             })
             return res.status(200).send({
-                success : true,
-                message : "Product successfully update"
+                success: true,
+                message: "Product successfully update"
             })
         } else {
-            let old = await Product.findById(id); 
-            let up = await Product.findByIdAndUpdate(id,{ 
-                categoryId: category, 
+            let old = await Product.findById(id);
+            let up = await Product.findByIdAndUpdate(id, {
+                categoryId: category,
                 name: name,
                 price: price,
                 description: description,
-                image: old.secure_url, 
-                public_id : old.public_id,
+                image: old.secure_url,
+                public_id: old.public_id,
                 marketstatus: marketstatus
             })
             return res.status(200).send({
-                success : true,
-                message : "Product successfully update"
+                success: true,
+                message: "Product successfully update"
             })
         }
     } catch (err) {
@@ -286,37 +292,93 @@ routes.put('/product/updateproduct/:id', upload,verifyToken, async (req, res) =>
 })
 
 //admin user wise cart show
-routes.get('/users/cart',verifyToken,async(req,res)=>{
-    try{
+routes.get('/users/cart', verifyToken, async (req, res) => {
+    try {
         let id = req.query.id;
-        let all = await Carts.find({userId:id}).populate('categoryId');
+        let all = await Carts.find({ userId: id }).populate('categoryId');
         return res.status(200).send({
-            success : true,
-            message : "Cart successfully fetch",
-            usercart : all
+            success: true,
+            message: "Cart successfully fetch",
+            usercart: all
         })
-    }catch(err){
+    } catch (err) {
         console.log(err);
         return false
     }
 })
 
 //admin route
-routes.get('/admin-auth',verifyToken,isAdmin,async(req,res)=>{
-    try{
+routes.get('/admin-auth', verifyToken, isAdmin, async (req, res) => {
+    try {
         return res.status(200).send({
-            success : true,
-            message : 'Admin access',
-            ok : true
+            success: true,
+            message: 'Admin access',
+            ok: true
         })
-    }catch(err){
+    } catch (err) {
         console.log(err);
         return false;
     }
 })
 
 
+//admin side slider add
+routes.post('/slider/addslider', verifyToken, sliderUpload, async (req, res) => {
+    try {
+        let imageUrl = await cloudinary.uploader.upload(req.file.path);
 
+        let add = await SliderModel.create({
+            slider: imageUrl.secure_url,
+            public_id: imageUrl.public_id,
+        })
+        return res.status(200).send({
+            success: true,
+            message: "Slider successfully add",
+            product: add
+        })
+    } catch (err) {
+        console.log(err);
+        return false;
+    }
+})
+
+//admin side slider view
+routes.get('/slider/viewslider', async (req, res) => {
+    try {
+        let id = req.query.id
+        const record = await SliderModel.findById(id);
+        if (!record) {
+            return res.status(404).send({
+                success: false,
+                message: "slider not found"
+            })
+        }
+        await cloudinary.uploader.destroy(record.public_id)
+        await SliderModel.findByIdAndDelete(id);
+        return res.status(200).send({
+            success: true,
+            message: "Slider successfully delete"
+        })
+    } catch (err) {
+        console.log(err);;
+        return false;
+    }
+})
+
+routes.get('/slider/deleteslider', async (req, res) => {
+    try {
+        let id = req.query.id
+        console.log(id);
+        // return res.status(200).send({
+        //     success: true,
+        //     message: "Slider fetch successfully",
+        //     sliders
+        // })
+    } catch (err) {
+        console.log(err);
+        return false;
+    }
+})
 
 
 module.exports = routes

@@ -15,6 +15,7 @@ import Private from './PrivateRoute/Private';
 import Users from "./pages/admin/users/Users";
 import AdminUserDetails from "./pages/admin/users/AdminUserDetails";
 import Profile from "./pages/Profile";
+import AdminSlider from './pages/admin/slider/AdminSlider';
 
 function App() {
   return (
@@ -31,14 +32,15 @@ function App() {
 
 
         {/* admin route */}
-        <Route path='/admin' element={<Private/>}>
-            <Route path="users" element={<Users/>}/>
-            <Route path="users/userdetails/:id" element={<AdminUserDetails/>}/>
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="category" element={<Category />} />
-            <Route path="product" element={<AdminProduct />} />
-            <Route path="addproduct" element={<AdminAddProduct />} />
-            <Route path="editproduct/:id" element={<AdminEditProduct />} />
+        <Route path='/admin' element={<Private />}>
+          <Route path="users" element={<Users />} />
+          <Route path="users/userdetails/:id" element={<AdminUserDetails />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="category" element={<Category />} />
+          <Route path="slider" element={<AdminSlider />} />
+          <Route path="product" element={<AdminProduct />} />
+          <Route path="addproduct" element={<AdminAddProduct />} />
+          <Route path="editproduct/:id" element={<AdminEditProduct />} />
         </Route>
 
       </Routes>

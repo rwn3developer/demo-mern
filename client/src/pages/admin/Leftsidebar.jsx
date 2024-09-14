@@ -20,6 +20,10 @@ const Leftsidebar = () => {
                             Users
                         </Link>
 
+                        <Link to={`/admin/slider`} className={`list-group-item list-group-item-action ${currentPath === '/admin/slider' ? 'active' : ''}`} aria-current="true">
+                            Slider
+                        </Link>
+
                         <Link to={`/admin/category`} className={`list-group-item list-group-item-action ${currentPath === '/admin/category' ? 'active' : ''}`} aria-current="true">
                             Category
                         </Link>
