@@ -52,7 +52,7 @@ routes.get('/', async (req, res) => {
 
 
 //admin product view api
-routes.get('/adminviewproduct', verifyToken,isAdmin, async (req, res) => {
+routes.get('/adminviewproduct', verifyToken, isAdmin, async (req, res) => {
   try {
 
     const page = req.query.page;
@@ -119,7 +119,30 @@ routes.put('/userDisLikeProduct', verifyToken, async (req, res) => {
   }
 })
 
+//userside all product fetch
+routes.get('/allproduct', async (req, res) => {
+  try {
+    const products = await Product.find({}).populate('categoryId');
 
+    let bestmobile = products.filter((val) => {
+      return val.categoryId.name == "mobile" && val.marketstatus == "best"
+    })
+
+    let bestelectronics = products.filter((val) => {
+      return val.categoryId.name == "electronics" && val.marketstatus == "best"
+    })
+
+    return res.status(200).send({
+      success: true,
+      message: "Product Successfully fetch",
+      bestmobile,
+      bestelectronics
+    })
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+})
 
 
 

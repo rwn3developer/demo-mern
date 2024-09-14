@@ -1,30 +1,63 @@
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import './home.css'
 import Header from '../component/Header'
 import Slider from '../component/Slider'
 
+
+
 const Home = () => {
+
+    const [bestmobile, setBestMobile] = useState([]);
+    const [products, setProducts] = useState([])
+
+    const getProducts = async () => {
+        try {
+            let data = await fetch(`http://localhost:8000/products/allproduct`, {
+                method: "GET",
+            })
+            let res = await data.json();
+            // setProducts(res.products);
+            let bestmobiledata = res.bestmobile
+            let bestmobi = res.bestmobile
+
+            setBestMobile(bestmobiledata)
+        } catch (err) {
+            console.log(err);
+            return false;
+        }
+    }
+
+
+
+    useEffect(() => {
+        getProducts();
+    }, [])
+
     return (
         <>
             <Header /><br></br><br></br>
             <Slider />
-            <div className='best-content'>
+            <div className='best-content mt-5'>
                 <div className="container">
                     <div className="row">
-                        <h4>Best Mobile</h4>
-                        <div className="col-lg-3">
-                            <div className="card p-3">
-                                <img className="card-img-top" src="https://rukminim2.flixcart.com/image/612/612/xif0q/keyboard/gaming-keyboard/j/8/w/f2023-aula-original-imagr4m2gjqgfgag.jpeg?q=70" alt="Card image cap" />
-                                <div className="card-body">
-                                    <p className="card-title">Card title</p>
-                                    <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                </div>
-                            </div>
+                        <h3>Best Mobile</h3>
+                        {
+                            bestmobile.map((val) => {
+                                return (
+                                    <div className="col-lg-3">
+                                        <div className="card p-3">
+                                            <img className="card-img-top" style={{ height: "250px", backgroundSize: 'contain' }} src={val.image} alt="Card image cap" />
+                                            <div className="card-body">
+                                                <h4 className="card-title">{val.name}</h4>
+                                                <p className="card-text">{val.description}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            })
+                        }
 
-
-
-                        </div>
 
                     </div>
                 </div>

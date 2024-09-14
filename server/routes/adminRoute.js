@@ -343,7 +343,7 @@ routes.post('/slider/addslider', verifyToken, sliderUpload, async (req, res) => 
 })
 
 //admin side slider view
-routes.get('/slider/viewslider', verifyToken, async (req, res) => {
+routes.get('/slider/viewslider', async (req, res) => {
     try {
         const record = await SliderModel.find({});
         return res.status(200).send({
