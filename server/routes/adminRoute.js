@@ -343,7 +343,21 @@ routes.post('/slider/addslider', verifyToken, sliderUpload, async (req, res) => 
 })
 
 //admin side slider view
-routes.get('/slider/viewslider', async (req, res) => {
+routes.get('/slider/viewslider', verifyToken, async (req, res) => {
+    try {
+        const record = await SliderModel.find({});
+        return res.status(200).send({
+            success: true,
+            message: "Slider successfully fetch",
+            sliders: record
+        })
+    } catch (err) {
+        console.log(err);;
+        return false;
+    }
+})
+
+routes.delete('/slider/deleteslider', async (req, res) => {
     try {
         let id = req.query.id
         const record = await SliderModel.findById(id);
@@ -364,18 +378,45 @@ routes.get('/slider/viewslider', async (req, res) => {
         return false;
     }
 })
-
-routes.get('/slider/deleteslider', async (req, res) => {
+routes.put('/slider/updateslider', sliderUpload, async (req, res) => {
     try {
-        let id = req.query.id
-        console.log(id);
-        // return res.status(200).send({
-        //     success: true,
-        //     message: "Slider fetch successfully",
-        //     sliders
-        // })
+        let id = req.body.id
+        const record = await SliderModel.findById(id);
+        if (!record) {
+            return res.status(404).send({
+                success: false,
+                message: "slider not found"
+            })
+        }
+        if (req.file) {
+            let old = await SliderModel.findById(id);
+            await cloudinary.uploader.destroy(old.public_id)
+
+            //new image upload in cloudynari
+            let imageUrl = await cloudinary.uploader.upload(req.file.path);
+
+            await SliderModel.findByIdAndUpdate(id, {
+                slider: imageUrl.secure_url,
+                public_id: imageUrl.public_id
+            })
+
+            return res.status(200).send({
+                success: true,
+                message: "Slider successfully update"
+            })
+        } else {
+            let old = await SliderModel.findById(id);
+            await SliderModel.findByIdAndUpdate(id, {
+                slider: old.secure_url,
+                public_id: old.public_id,
+            })
+            return res.status(200).send({
+                success: true,
+                message: "Slider successfully update"
+            })
+        }
     } catch (err) {
-        console.log(err);
+        console.log(err);;
         return false;
     }
 })
